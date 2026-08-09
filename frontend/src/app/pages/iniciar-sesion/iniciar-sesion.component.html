@@ -1,0 +1,8 @@
+<div class="max-w-md mx-auto py-20">
+  <h2 class="text-3xl font-bold mb-6">Iniciar Sesión</h2>
+  <form (submit)="iniciarSesion()">
+    <input [(ngModel)]="correo" name="correo" type="email" placeholder="Correo" class="w-full p-3 border mb-4 rounded">
+    <input [(ngModel)]="password" name="password" type="password" placeholder="Contraseña" class="w-full p-3 border mb-6 rounded">
+    <button type="submit" class="w-full bg-verde-epigrafe text-white p-3 rounded">Entrar</button>
+  </form>
+</div>

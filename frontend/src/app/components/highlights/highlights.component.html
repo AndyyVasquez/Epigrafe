@@ -1,0 +1,76 @@
+<section class="max-w-6xl mx-auto px-8 py-10 pb-20">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+
+    <div class="bg-white bg-opacity-60 p-8 rounded-2xl shadow-md border border-gray-100 flex flex-col justify-between">
+      <h3 class="text-2xl font-serif font-bold mb-6 text-center text-texto-principal">Novedades de la semana</h3>
+      <div class="flex flex-col sm:flex-row gap-6 items-start">
+        <img [src]="libros[indiceActual].imagen" class="w-32 rounded shadow-sm object-cover">
+        <div class="flex-1">
+          <h4 class="font-bold text-lg text-texto-principal">{{ libros[indiceActual].titulo }}</h4>
+          <p class="text-sm mb-4 text-gray-700">Autora: {{ libros[indiceActual].autor }}</p>
+          <p class="text-sm font-bold mb-1">Recomendación:</p>
+          <p class="text-sm text-gray-700 leading-relaxed min-h-[60px]">{{ libros[indiceActual].recomendacion }}</p>
+        </div>
+      </div>
+
+      <div class="flex justify-center gap-2 mt-6">
+        @for (libro of libros; track $index) {
+          <button (click)="seleccionarLibro($index)" class="w-3 h-3 rounded-full transition-colors"
+                  [class.bg-verde-epigrafe]="indiceActual === $index" [class.bg-gray-300]="indiceActual !== $index">
+          </button>
+        }
+      </div>
+    </div>
+
+<div class="p-8 rounded-2xl shadow-md border flex flex-col justify-between h-full min-h-[320px] transition-colors duration-500"
+     [ngClass]="getClasesTarjeta()">
+
+  @if (mesActual === 5) { <span class="text-xs font-bold text-center text-white px-2 py-1 rounded-full bg-pride-gradient mb-2 block">Orgullo LGBT+</span> }
+  @if (mesActual === 6) {
+    <div class="overflow-hidden whitespace-nowrap mb-2 block bg-amber-100 py-1 rounded-full border border-amber-200">
+      <div class="animate-marquee text-lg">🐕‍🦺 🐕 🐩 🐾 🐕‍🦺 🐕 🐩 🐾 🐕‍🦺 🐕 🐩 🐾</div>
+    </div>
+  }
+
+  @if (cargandoInscripcion) {
+    <div class="flex flex-col items-center justify-center h-full py-8 text-verde-epigrafe animation-fade-in">
+      <svg class="animate-spin h-10 w-10 mb-4" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+      <p class="font-medium animate-pulse text-lg">Inscribiendo...</p>
+    </div>
+  } @else if (mostrarFormulario) {
+    <div class="w-full flex flex-col h-full justify-center animation-fade-in">
+      <h3 class="text-xl font-serif font-bold text-center mb-4 text-texto-principal">Tus datos</h3>
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Nombre completo</label>
+        <input type="text" [(ngModel)]="nombreUsuario" class="w-full px-4 py-2 border rounded-md" placeholder="Ej. Ana Pérez">
+      </div>
+      <div class="mb-6">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Correo electrónico</label>
+        <input type="email" [(ngModel)]="emailUsuario" class="w-full px-4 py-2 border rounded-md" placeholder="ana@ejemplo.com">
+      </div>
+      <div class="flex gap-3 mt-auto">
+        <button (click)="enviarFormulario()" [disabled]="!nombreUsuario || !emailUsuario" class="flex-1 bg-verde-epigrafe text-white py-2.5 rounded-md shadow-sm">Enviar</button>
+        <button (click)="cancelarFormulario()" class="flex-1 bg-white border border-gray-300 py-2.5 rounded-md shadow-sm">Cancelar</button>
+      </div>
+    </div>
+  } @else {
+    <div class="flex flex-col h-full justify-between">
+      <div>
+        <h3 class="text-2xl font-serif font-bold mb-4 text-center text-texto-principal">
+          {{ mesActual === 6 ? '¡Amigos de cuatro patas!' : 'Club de lectura' }}
+        </h3>
+        <p class="font-bold text-lg mb-4 text-center text-texto-principal">
+          {{ mesActual === 6 ? 'Celebramos con nuestros compañeros peludos' : 'Próxima reunión: Sábado 27 de junio' }}
+        </p>
+        <p class="text-base text-gray-700 text-justify leading-relaxed mb-8">
+          {{ mesActual === 6 ? 'En julio, trae a tu mascota y únete al club de lectura. Este mes los libros a discutir son: Su olor después de la lluvia de Cédric Sapin-Defour y El arte de conducir bajo la lluvia de Garth Stein.' : 'Libro del mes: autor o autora que pertenezca a la comunidad LGBT+' }}
+        </p>
+      </div>
+      <button (click)="abrirFormulario()" [disabled]="inscripcionExitosa" class="bg-verde-epigrafe text-white font-semibold py-3 px-8 rounded-md self-center">
+        {{ inscripcionExitosa ? '¡Inscrito Correctamente! ✓' : '¡Inscríbete!' }}
+      </button>
+    </div>
+  }
+</div>
+  </div>
+</section>

@@ -1,0 +1,12 @@
+/* You can add global styles to this file, and also import other style files */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@layer utilities {
+  .bg-pride-gradient {
+    background: linear-gradient(
+      to right,
+      #E40303, #FF8C00, #FFED00, #008026, #004DFF, #750787
+    );
+  }
+}

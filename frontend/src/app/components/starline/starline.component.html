@@ -1,0 +1,40 @@
+<section class="max-w-6xl mx-auto px-8 py-10">
+  <div class="relative w-full rounded-2xl shadow-xl overflow-hidden flex flex-col md:flex-row items-center justify-between p-8 md:p-12 transition-colors duration-1000"
+       [ngClass]="{
+         'bg-verde-epigrafe text-white': periodoActual === 'mañana',
+         'bg-amber-100 text-gray-900': periodoActual === 'tarde',
+         'bg-slate-800 text-indigo-50': periodoActual === 'noche'
+       }">
+
+    <div class="absolute top-0 right-0 -mt-20 -mr-20 w-72 h-72 bg-white bg-opacity-10 rounded-full blur-2xl"></div>
+
+    <div class="relative z-10 w-full md:w-3/5 text-center md:text-left mb-10 md:mb-0">
+      <p class="text-sm md:text-base uppercase tracking-widest font-semibold mb-2 opacity-80">
+        Recomendación del Barista
+      </p>
+      <h2 class="text-4xl md:text-6xl font-serif font-bold mb-4 drop-shadow-md">
+        {{ titulo }}
+      </h2>
+      <p class="text-lg opacity-90 mb-8 max-w-md mx-auto md:mx-0 font-sans">
+        {{ subtitulo }}
+      </p>
+
+      <button class="group flex items-center justify-center md:justify-start space-x-3 bg-white text-gray-900 font-bold py-3 px-8 rounded-md hover:bg-gray-100 transition-all shadow-md mx-auto md:mx-0">
+        <span>{{ textoBoton }}</span>
+        <span class="transform group-hover:translate-x-1 transition-transform">➔</span>
+      </button>
+    </div>
+
+    <div class="relative z-10 w-full md:w-2/5 flex justify-center h-64 md:h-80">
+      <div class="absolute w-48 h-48 md:w-64 md:h-64 bg-white bg-opacity-20 rounded-full top-1/2 transform -translate-y-1/2"></div>
+
+      <img src="img/bebida-dia.png" alt="Recomendación"
+           class="absolute h-full object-contain transition-all duration-1000 ease-out drop-shadow-2xl"
+           [ngClass]="{
+             'translate-y-24 opacity-0 scale-90': !animarBebida,
+             'translate-y-0 opacity-100 scale-100': animarBebida
+           }">
+    </div>
+
+  </div>
+</section>

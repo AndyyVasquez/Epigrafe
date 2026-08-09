@@ -1,0 +1,30 @@
+<div class="max-w-6xl mx-auto px-8 py-12">
+  <div class="flex flex-col md:flex-row gap-4 mb-8">
+    <input type="text"
+           [(ngModel)]="terminoBusqueda"
+           placeholder="Busca por título..."
+           class="flex-1 px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-verde-epigrafe">
+
+    <select [(ngModel)]="filtroSeleccionado" class="px-4 py-2 border rounded-lg">
+      <option>Todos</option>
+      <option>Clásicos</option>
+      <option>Misterio</option>
+      <option>Productividad</option>
+    </select>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    @for (libro of librosFiltrados; track libro.titulo) {
+      <div class="p-4 border rounded-xl shadow-sm hover:shadow-md transition-shadow">
+         <div class="">
+          <img [src]="libro.imagen" [alt]="libro.titulo" class="w-auto h-64 align-content-center object-cover rounded shadow-2xl">
+        </div>
+        <h3 class="font-bold mt-5">{{ libro.titulo }}</h3>
+        <p class="text-sm text-gray-600">{{ libro.autor }}</p>
+        <span class="text-verde-epigrafe font-bold">${{ libro.precio }}</span>
+      </div>
+    } @empty {
+      <p class="text-gray-500 italic">No encontramos resultados para tu búsqueda.</p>
+    }
+  </div>
+</div>

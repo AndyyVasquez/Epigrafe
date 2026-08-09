@@ -1,0 +1,118 @@
+<footer class="w-full bg-verde-epigrafe text-white py-12 px-8 mt-10">
+  <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 items-start text-sm">
+
+    <div class="flex flex-col space-y-2">
+      <div class="flex items-start space-x-2">
+        <ng-icon name="lucideMapPin" class="text-xl flex-shrink-0 mt-1"></ng-icon>
+        <a href="https://www.google.com/maps/search/?api=1&query=20.634700080917852,-100.48617362445165">
+        <p class="leading-relaxed">Av. Puente de la Reina<br>2062, Puerta Navarra, Qro</p>
+      </a>
+      </div>
+      <a href="https://wa.me/524425286037" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-2 hover:text-gray-300 transition-colors">
+        <ng-icon name="tablerPhone" class="text-xl flex-shrink-0"></ng-icon>
+        <span>+52 4425286037</span>
+      </a>
+    </div>
+
+    <div class="w-60 -m-5">
+      <div class="h-30 overflow-hidden rounded-md shadow-sm border border-white border-opacity-20">
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3733.8566249628984!2d-100.48617362445165!3d20.634700080917852!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85d350fe37c59c8d%3A0xd96222a7644fa6eb!2sFraccionamiento%20Puerta%20Navarra!5e0!3m2!1ses!2smx!4v1782414608680!5m2!1ses!2smx"
+          class="w-full h-full"
+          style="border:0;"
+          allowfullscreen=""
+          loading="lazy"
+          referrerpolicy="strict-origin-when-cross-origin"
+        ></iframe>
+      </div>
+      <a href="https://www.google.com/maps/search/?api=1&query=20.634700080917852,-100.48617362445165"
+         target="_blank"
+         rel="noopener noreferrer"
+         class="mt-2 inline-block text-sm text-white hover:text-gray-300 transition-colors">
+        Abrir en Google Maps
+      </a>
+    </div>
+
+    <div class="flex flex-col space-y-4 pt-2">
+      <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-2 hover:text-gray-300 transition-colors">
+        <ng-icon name="tablerBrandInstagram" class="text-xl"></ng-icon>
+        <span>@epigrafe_cafe</span>
+      </a>
+      <a href="https://www.tiktok.com" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-2 hover:text-gray-300 transition-colors">
+        <ng-icon name="tablerBrandTiktok" class="text-xl"></ng-icon>
+        <span>@epigrafe_cafe</span>
+      </a>
+    </div>
+
+    <div class="grid grid-cols-2 gap-x-4 gap-y-2 pt-2">
+      <div class="flex flex-col space-y-2">
+        <a href="#" class="hover:text-gray-300 transition-colors">Inicio</a>
+        <a href="/menu/bebidas" class="hover:text-gray-300 transition-colors">Menú</a>
+        <a href="/libreria/novedades" class="hover:text-gray-300 transition-colors">Librería</a>
+      </div>
+      <div class="flex flex-col space-y-2">
+        <a href="/clublectura" class="hover:text-gray-300 transition-colors">Comunidad</a>
+        <a href="/contacto/ubicacion" class="hover:text-gray-300 transition-colors">Contacto</a>
+        <a href="/contacto/faq" class="hover:text-gray-300 transition-colors mt-4">FAQ</a>
+        <a href="/contacto/facturacion" class="hover:text-gray-300 transition-colors">Facturación</a>
+      </div>
+    </div>
+
+  </div>
+      <div class="w-full flex flex-col border-t border-white border-opacity-10 mt-10 pt-6 -mb-4 items-center text-xs text-white opacity-60">
+  <div class="w-full flex flex-row justify-center items-center gap-6">
+    <p class="m-0">© 2026 Epígrafe. Todos los derechos reservados.</p>
+
+    <button (click)="abrirModalPrivacidad()" class="hover:text-white transition-colors underline">
+      Aviso de Privacidad
+    </button>
+
+    <a routerLink="/terminos/terminos" class="hover:text-white transition-colors underline">
+      Términos y Condiciones
+    </a>
+  </div>
+</div>
+
+ @if (mostrarModal) {
+  <div class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white text-gray-800 p-8 rounded-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+      <h2 class="text-2xl text-center font-serif font-bold mb-4">Aviso de Privacidad</h2>
+      <p class="text-sm mb-4 text-justify">
+        <b>Aviso de Privacidad y Confidencialidad – Epígrafe</b> <br> <br>
+        Responsable: <br>
+        Epígrafe Literatura y Café, con domicilio en Av. Puente de la Reina 2062, Puerta Navarra, Querétaro, Qro. <br> <br>
+        Datos personales recabados: <br>
+        Para gestionar tu participación en nuestra comunidad, recabamos:
+      </p>
+        <ul class="list-disc list-inside mb-4 text-sm text-justify">
+          <li>Identificación: Nombre completo.</li>
+          <li>Contacto: Correo electrónico.</li>
+          <li>Otros: Historial de preferencias en nuestro Club de Lectura y transacciones realizadas en nuestra
+        plataforma.</li>
+        </ul>
+         <p class="text-sm mb-4 text-justify">
+        Finalidades del tratamiento: <br>
+        Primarias: Gestión de tu inscripción al Club de Lectura, comunicación sobre
+        sesiones, eventos culturales y estatus de pedidos. <br>
+        Secundarias: Envío de encuestas de satisfacción y estadísticas
+        anónimas para la mejora de nuestro menú y catálogo literario. <br> <br>
+        Derechos ARCO: <br>
+        Tienes derecho a acceder, rectificar, cancelar u oponerse al tratamiento de tus datos enviando una solicitud a
+        <b>contacto@epigrafe.com</b>. La solicitud debe incluir tu nombre completo y la descripción clara del derecho a ejercer.
+        <em>Plazo de respuesta: 20 días hábiles.</em> <br> <br>
+        Medidas de Seguridad: <br>
+        Epígrafe implementa medidas administrativas y técnicas, incluyendo el cifrado de datos y control de acceso, para
+        garantizar la confidencialidad de tu información personal. <br><br>
+        <b>Fecha de última actualización: 26 de junio de 2026.</b> <br>
+      </p>
+
+      <div class="flex justify-end">
+        <button (click)="mostrarModal = false" class="bg-verde-epigrafe text-white px-6 py-2 rounded-lg font-bold">
+          Entendido
+        </button>
+      </div>
+    </div>
+  </div>
+}
+</footer>
+

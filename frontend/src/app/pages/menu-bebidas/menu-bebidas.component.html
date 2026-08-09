@@ -1,0 +1,61 @@
+<div class="max-w-6xl mx-auto px-8 py-12">
+
+  <div class="text-center mb-12">
+    <h1 class="text-4xl md:text-5xl font-serif font-bold text-texto-principal mb-4">
+      Nuestro Menú
+    </h1>
+    <p class="text-gray-600 max-w-md mx-auto font-sans">
+      Café de especialidad trazable y procesos artesanales pensados para acompañar tus mejores lecturas.
+    </p>
+  </div>
+
+  <div class="flex justify-center border-b border-gray-200 mb-12">
+    <div class="flex space-x-8 text-base font-medium">
+      <a routerLink="/menu/bebidas"
+         routerLinkActive="border-verde-epigrafe text-verde-epigrafe"
+         class="pb-4 border-b-2 border-transparent hover:text-verde-epigrafe transition-colors px-2">
+        Capítulo I. Bebidas
+      </a>
+      <a routerLink="/menu/postres"
+         routerLinkActive="border-verde-epigrafe text-verde-epigrafe"
+         class="pb-4 border-b-2 border-transparent text-gray-400 hover:text-verde-epigrafe transition-colors px-2">
+        Capítulo II. Panadería y Postres
+      </a>
+      <a routerLink="/menu/promociones"
+         routerLinkActive="border-verde-epigrafe text-verde-epigrafe"
+         class="pb-4 border-b-2 border-transparent text-gray-400 hover:text-verde-epigrafe transition-colors px-2">
+        Capítulo III. Promociones
+      </a>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    @for (bebida of bebidas; track bebida.nombre) {
+      <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col justify-between hover:shadow-md transition-shadow">
+        <div>
+          <span class="inline-block text-xs font-bold uppercase tracking-wider text-verde-epigrafe bg-crema-fondo px-2.5 py-1 rounded-full mb-4">
+            {{ bebida.tipo }}
+          </span>
+
+          <div class="flex justify-between items-baseline mb-2">
+            <h3 class="text-xl font-serif font-bold text-texto-principal">
+              {{ bebida.nombre }}
+            </h3>
+            <span class="text-lg font-bold text-verde-epigrafe ml-2">
+              ${{ bebida.precio }}
+            </span>
+          </div>
+
+          <p class="text-sm text-gray-600 leading-relaxed font-sans mb-6">
+            {{ bebida.descripcion }}
+          </p>
+        </div>
+
+        <button class="w-full bg-crema-fondo hover:bg-verde-epigrafe hover:text-white text-verde-epigrafe font-bold py-2.5 px-4 rounded-md transition-all text-sm border border-transparent hover:border-transparent">
+          Agregar a la orden
+        </button>
+      </div>
+    }
+  </div>
+
+</div>

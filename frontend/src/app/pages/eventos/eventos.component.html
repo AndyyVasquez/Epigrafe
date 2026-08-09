@@ -1,0 +1,14 @@
+<div class="max-w-4xl mx-auto px-8 py-12">
+  <h1 class="text-4xl font-serif font-bold text-texto-principal mb-12">Eventos Culturales</h1>
+
+  <div class="space-y-12 border-l-2 border-verde-epigrafe pl-8">
+    @for (evento of eventos; track evento.fecha) {
+      <div class="relative">
+        <div class="absolute -left-[41px] bg-verde-epigrafe text-white p-2 rounded-full">📅</div>
+        <h3 class="text-xl font-bold text-texto-principal">{{ evento.titulo }}</h3>
+        <p class="text-verde-epigrafe font-medium mb-2">{{ evento.fecha }} | {{ evento.hora }}</p>
+        <p class="text-gray-600">{{ evento.descripcion }}</p>
+      </div>
+    }
+  </div>
+</div>

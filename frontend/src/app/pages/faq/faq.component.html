@@ -1,0 +1,20 @@
+<div class="max-w-3xl mx-auto px-8 py-16">
+  <h1 class="text-4xl font-serif font-bold text-texto-principal mb-12">Preguntas Frecuentes</h1>
+
+  <div class="space-y-4">
+    @for (item of preguntas; track item.pregunta; let i = $index) {
+      <div class="border border-gray-200 rounded-xl overflow-hidden">
+        <button (click)="togglePregunta(i)"
+                class="w-full flex justify-between items-center p-6 bg-white hover:bg-gray-50 transition-colors font-bold text-lg text-texto-principal">
+          {{ item.pregunta }}
+          <span class="text-verde-epigrafe">{{ preguntaAbierta === i ? '−' : '+' }}</span>
+        </button>
+
+        <div [class.hidden]="preguntaAbierta !== i"
+             class="p-6 bg-gray-50 text-gray-700 leading-relaxed border-t border-gray-100 animation-fade-in">
+          {{ item.respuesta }}
+        </div>
+      </div>
+    }
+  </div>
+</div>
