@@ -1,8 +1,85 @@
 <div class="p-10">
-  <h1 class="text-3xl font-bold text-verde-epigrafe">Panel de Administración</h1>
-  <div class="grid grid-cols-3 gap-6 mt-8">
-    <div class="p-6 bg-gray-100 rounded-xl">Gestionar Usuarios</div>
-    <div class="p-6 bg-gray-100 rounded-xl">Reportes de Ventas</div>
-    <div class="p-6 bg-gray-100 rounded-xl">Configuración del Sitio</div>
-  </div>
+  <h1 class="text-3xl font-bold text-verde-epigrafe mb-2">Panel de Administración</h1>
+  <p class="text-gray-500 mb-8">Gestión de cuentas de usuario</p>
+
+  @if (cargando()) {
+    <p class="text-gray-500">Cargando usuarios...</p>
+  } @else if (error()) {
+    <div class="bg-red-50 border border-red-200 text-red-700 rounded-lg p-4">
+      {{ error() }}
+      <button (click)="cargarUsuarios()" class="ml-2 underline">Reintentar</button>
+    </div>
+  } @else {
+    <div class="overflow-x-auto rounded-xl border border-gray-200">
+      <table class="min-w-full text-sm text-left">
+        <thead class="bg-gray-50 text-gray-600 uppercase text-xs">
+          <tr>
+            <th class="px-4 py-3">Usuario</th>
+            <th class="px-4 py-3">Habilitado</th>
+            <th class="px-4 py-3">Grupo</th>
+            <th class="px-4 py-3">Cambio de contraseña</th>
+            <th class="px-4 py-3">Creado</th>
+            <th class="px-4 py-3">Último inicio de sesión</th>
+            <th class="px-4 py-3">Acciones</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          @for (usuario of usuarios(); track usuario.id) {
+            <tr class="hover:bg-crema-fondo/40">
+              <td class="px-4 py-3">
+                <div class="font-medium text-texto-principal">{{ usuario.nombre }} {{ usuario.apellidos }}</div>
+                <div class="text-gray-500 text-xs">{{ usuario.correo }}</div>
+              </td>
+              <td class="px-4 py-3">
+                @if (usuario.habilitado) {
+                  <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-green-100 text-green-700 text-xs font-medium">
+                    Habilitado
+                  </span>
+                } @else {
+                  <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-red-100 text-red-700 text-xs font-medium">
+                    Deshabilitado
+                  </span>
+                }
+              </td>
+              <td class="px-4 py-3">
+                <span class="px-2 py-1 rounded-md bg-gray-100 text-gray-700 text-xs">{{ usuario.rol || 'Sin rol' }}</span>
+              </td>
+              <td class="px-4 py-3">
+                <button
+                  (click)="toggleRequiereCambioPassword(usuario)"
+                  [disabled]="procesandoId() === usuario.id"
+                  class="text-xs underline disabled:opacity-50"
+                  [class.text-amber-600]="usuario.requiere_cambio_password"
+                  [class.text-gray-400]="!usuario.requiere_cambio_password"
+                >
+                  {{ usuario.requiere_cambio_password ? 'Sí, requiere' : 'No requiere' }}
+                </button>
+              </td>
+              <td class="px-4 py-3 text-gray-500">{{ formatearFecha(usuario.creado_en) }}</td>
+              <td class="px-4 py-3 text-gray-500">{{ formatearFecha(usuario.ultimo_login) }}</td>
+              <td class="px-4 py-3">
+                <button
+                  (click)="toggleHabilitado(usuario)"
+                  [disabled]="procesandoId() === usuario.id"
+                  class="px-3 py-1.5 rounded-md text-xs font-medium transition-colors disabled:opacity-50"
+                  [class.bg-red-50]="usuario.habilitado"
+                  [class.text-red-600]="usuario.habilitado"
+                  [class.bg-green-50]="!usuario.habilitado"
+                  [class.text-green-600]="!usuario.habilitado"
+                >
+                  {{ procesandoId() === usuario.id ? 'Procesando...' : (usuario.habilitado ? 'Deshabilitar' : 'Habilitar') }}
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <p class="text-xs text-gray-400 mt-4">
+      Deshabilitar una cuenta no borra su información: el usuario deja de poder
+      iniciar sesión, pero su registro permanece en el sistema y puede
+      reactivarse en cualquier momento.
+    </p>
+  }
 </div>
