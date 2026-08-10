@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { AuthService } from '../../auth.service';
 
 @Component({
   selector: 'app-login',
@@ -14,7 +15,7 @@ export class IniciarSesion {
   correo = '';
   password = '';
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router, private authService: AuthService) {}
 
   iniciarSesion() {
     const credenciales = { correo: this.correo, password: this.password };
@@ -25,6 +26,11 @@ export class IniciarSesion {
           // Guardar token y datos del usuario en localStorage
           localStorage.setItem('token', res.token);
           localStorage.setItem('usuario', JSON.stringify(res.usuario));
+
+          // Avisar al AuthService: esto es lo que hace que el navbar
+          // (suscrito a authService.user$ vía el pipe async) se actualice
+          // solo, sin recargar la página.
+          this.authService.updateUser(res.usuario);
 
           alert('Bienvenido de nuevo, ' + res.usuario.nombre);
 

@@ -14,6 +14,7 @@ import { Beneficios } from './pages/beneficios/beneficios.component';
 import { Ubicacion } from './pages/ubicacion/ubicacion.component';
 import { Faq } from './pages/faq/faq.component';
 import { Facturacion } from './pages/facturacion/facturacion.component';
+import { Contactomsj } from './pages/contactomsj/contactomsj.component';
 import { Dashboard } from './admin/dashboard/dashboard.component';
 import { EditorLibreria } from './admin/editorlibreria/editorlibreria.component';
 import { IniciarSesion } from './pages/iniciar-sesion/iniciar-sesion.component';
@@ -36,6 +37,7 @@ export const routes: Routes = [
   { path: 'contacto/ubicacion', component: Ubicacion },
   { path: 'contacto/faq', component: Faq },
   { path: 'contacto/facturacion', component: Facturacion },
+  { path: 'contacto/mensaje', component: Contactomsj },
   { path: 'terminos/terminos', component: Terminos },
   { path: 'login', component: IniciarSesion },
   { path: 'registro', component: Registro },
