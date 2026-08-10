@@ -1,4 +1,4 @@
-const pool = require('../config/db');
+const pool = require('../models/db');
 
 // Recibe un mensaje del formulario de "Contáctanos" y lo guarda en la BD.
 // Este endpoint es público (no requiere sesión) porque cualquier visitante,

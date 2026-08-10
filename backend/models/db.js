@@ -9,9 +9,12 @@ const pool = new Pool({
   port: 5432,              // Puerto estándar de Postgres
 });
 
-// Probar la conexión
+// Probar la conexión (sin tumbar el servidor si falla: solo lo registramos)
 pool.connect((err, client, done) => {
-  if (err) throw err;
+  if (err) {
+    console.error('❌ No se pudo conectar a PostgreSQL:', err.message);
+    return;
+  }
   console.log('✅ Conexión a PostgreSQL establecida correctamente');
   done();
 });

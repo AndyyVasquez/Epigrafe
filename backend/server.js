@@ -5,12 +5,28 @@ const helmet = require('helmet');
 // const env = require('./config/env');
 const jwt = require('jsonwebtoken');
 const pool = require('./models/db');
+const contactoRoutes = require('./routes/contactoRoutes');
 
 const app = express();
 const JWT_SECRET = 'mi_clave_secreta_super_segura_para_epigrafe'; 
 
+// Express genera un ETag automático para cada respuesta JSON. Eso está bien
+// para contenido estático, pero es peligroso en una API con datos sensibles
+// y cambiantes: el navegador puede terminar recibiendo un 304 "sin cambios"
+// con cuerpo vacío en vez de los datos reales, o mostrar datos desactualizados
+// después de habilitar/deshabilitar un usuario. Lo desactivamos globalmente.
+app.disable('etag');
+
 app.use(cors());
 app.use(express.json());
+
+// Ninguna respuesta de esta API debe guardarse en caché del navegador.
+app.use((req, res, next) => {
+    res.set('Cache-Control', 'no-store');
+    next();
+});
+
+app.use('/api/contacto', contactoRoutes);
 
 
 app.post('/api/auth/registro', async (req, res) => {
@@ -56,11 +72,21 @@ app.post('/api/auth/login', async (req, res) => {
 
         const usuario = usuarioRes.rows[0];
 
+        // Verificación de estado de la cuenta: una cuenta deshabilitada
+        // permanece guardada en el sistema (no se borra), pero no puede
+        // iniciar sesión aunque la contraseña sea correcta.
+        if (!usuario.habilitado) {
+            return res.status(403).json({ error: 'Esta cuenta está deshabilitada. Contacta a un administrador.' });
+        }
+
         // Validación de credenciales comparando hashes
         const validPassword = await bcrypt.compare(password, usuario.password);
         if (!validPassword) {
             return res.status(401).json({ error: 'Credenciales inválidas (Contraseña incorrecta).' });
         }
+
+        // Registrar el último inicio de sesión exitoso
+        await pool.query('UPDATE usuarios SET ultimo_login = NOW() WHERE id = $1', [usuario.id]);
 
         // Obtener el rol del usuario
         const rolRes = await pool.query(
@@ -80,7 +106,12 @@ app.post('/api/auth/login', async (req, res) => {
         res.json({
             mensaje: 'Inicio de sesión correcto',
             token: token,
-            usuario: { nombre: usuario.nombre, correo: usuario.correo, rol: rol }
+            usuario: {
+                nombre: usuario.nombre,
+                correo: usuario.correo,
+                rol: rol,
+                requiereCambioPassword: usuario.requiere_cambio_password,
+            }
         });
 
     } catch (err) {
@@ -125,6 +156,92 @@ app.get('/api/admin/dashboard', verificarTokenyRol(['Administrador']), (req, res
 
 app.get('/api/editor/catalogo', verificarTokenyRol(['Administrador', 'Editor']), (req, res) => {
     res.json({ contenido: 'Módulo de edición de catálogo disponible.' });
+});
+
+// ---------------------------------------------------------------------------
+// Gestión de cuentas de usuario (solo Administrador)
+// Equivalente web de habilitar/deshabilitar cuentas de un sistema operativo:
+// una cuenta deshabilitada NUNCA se borra, solo se le impide iniciar sesión.
+// ---------------------------------------------------------------------------
+
+// Lista todos los usuarios con su estado, grupo (rol) y metadatos de cuenta.
+app.get('/api/admin/usuarios', verificarTokenyRol(['Administrador']), async (req, res) => {
+    try {
+        const resultado = await pool.query(
+            `SELECT u.id, u.nombre, u.apellidos, u.correo, u.habilitado,
+                    u.creado_en, u.ultimo_login, u.requiere_cambio_password,
+                    r.nombre AS rol
+             FROM usuarios u
+             LEFT JOIN usuario_rol ur ON ur.usuario_id = u.id
+             LEFT JOIN roles r ON r.id = ur.rol_id
+             ORDER BY u.creado_en DESC`
+        );
+        res.json(resultado.rows);
+    } catch (err) {
+        console.error('Error al listar usuarios:', err);
+        res.status(500).json({ error: 'No se pudo obtener la lista de usuarios.' });
+    }
+});
+
+// Habilita o deshabilita una cuenta. Nunca elimina al usuario ni sus datos.
+app.patch('/api/admin/usuarios/:id/estado', verificarTokenyRol(['Administrador']), async (req, res) => {
+    const { id } = req.params;
+    const { habilitado } = req.body;
+
+    if (typeof habilitado !== 'boolean') {
+        return res.status(400).json({ error: 'El campo "habilitado" debe ser true o false.' });
+    }
+
+    // Un administrador no puede deshabilitarse a sí mismo, para evitar
+    // quedarse fuera del sistema sin nadie que pueda revertirlo.
+    if (Number(id) === req.usuario.id && habilitado === false) {
+        return res.status(400).json({ error: 'No puedes deshabilitar tu propia cuenta.' });
+    }
+
+    try {
+        const resultado = await pool.query(
+            'UPDATE usuarios SET habilitado = $1 WHERE id = $2 RETURNING id, nombre, habilitado',
+            [habilitado, id]
+        );
+
+        if (resultado.rows.length === 0) {
+            return res.status(404).json({ error: 'Usuario no encontrado.' });
+        }
+
+        res.json({
+            mensaje: habilitado ? 'Cuenta habilitada correctamente.' : 'Cuenta deshabilitada correctamente.',
+            usuario: resultado.rows[0],
+        });
+    } catch (err) {
+        console.error('Error al cambiar estado del usuario:', err);
+        res.status(500).json({ error: 'No se pudo actualizar el estado de la cuenta.' });
+    }
+});
+
+// Marca o desmarca si el usuario debe cambiar su contraseña en el próximo login.
+app.patch('/api/admin/usuarios/:id/requiere-cambio-password', verificarTokenyRol(['Administrador']), async (req, res) => {
+    const { id } = req.params;
+    const { requiereCambioPassword } = req.body;
+
+    if (typeof requiereCambioPassword !== 'boolean') {
+        return res.status(400).json({ error: 'El campo "requiereCambioPassword" debe ser true o false.' });
+    }
+
+    try {
+        const resultado = await pool.query(
+            'UPDATE usuarios SET requiere_cambio_password = $1 WHERE id = $2 RETURNING id, nombre, requiere_cambio_password',
+            [requiereCambioPassword, id]
+        );
+
+        if (resultado.rows.length === 0) {
+            return res.status(404).json({ error: 'Usuario no encontrado.' });
+        }
+
+        res.json({ mensaje: 'Actualizado correctamente.', usuario: resultado.rows[0] });
+    } catch (err) {
+        console.error('Error al actualizar requiere_cambio_password:', err);
+        res.status(500).json({ error: 'No se pudo actualizar el usuario.' });
+    }
 });
 
 app.listen(3000, () => {
