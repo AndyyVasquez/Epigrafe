@@ -18,7 +18,7 @@ export class Registro {
   constructor(private http: HttpClient, private router: Router) {}
 
   registrarUsuario() {
-    this.http.post('http://localhost:3000/api/auth/registro', this.usuario)
+    this.http.post('https://epigrafe.onrender.com/api/auth/registro', this.usuario)
       .subscribe({
         next: () => {
           alert('Registro exitoso. ¡Bienvenido a Epígrafe!');
