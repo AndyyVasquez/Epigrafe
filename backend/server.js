@@ -16,7 +16,7 @@ const JWT_SECRET = 'mi_clave_secreta_super_segura_para_epigrafe';
 // con cuerpo vacío en vez de los datos reales, o mostrar datos desactualizados
 // después de habilitar/deshabilitar un usuario. Lo desactivamos globalmente.
 app.disable('etag');
-
+const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
@@ -244,6 +244,6 @@ app.patch('/api/admin/usuarios/:id/requiere-cambio-password', verificarTokenyRol
     }
 });
 
-app.listen(3000, () => {
-    console.log('Servidor seguro corriendo en http://localhost:3000');
+app.listen(PORT, () => {
+    console.log(`Servidor corriendo en el puerto ${PORT}`);
 });
