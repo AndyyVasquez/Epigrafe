@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ClubLectura {
-  private apiUrl = 'http://localhost:3000/api/club-lectura';
+  private apiUrl = 'https://epigrafe.onrender.com/api/club-lectura';
 
   constructor(private http: HttpClient) { }
 

@@ -50,7 +50,7 @@ export class Dashboard implements OnInit {
     this.error.set('');
     try {
       const datos = await firstValueFrom(
-        this.http.get<UsuarioAdmin[]>('http://localhost:3000/api/admin/usuarios', {
+        this.http.get<UsuarioAdmin[]>('https://epigrafe.onrender.com/api/admin/usuarios', {
           headers: this.headers(),
         })
       );
@@ -74,7 +74,7 @@ export class Dashboard implements OnInit {
     try {
       await firstValueFrom(
         this.http.patch(
-          `http://localhost:3000/api/admin/usuarios/${usuario.id}/estado`,
+          `https://epigrafe.onrender.com/api/admin/usuarios/${usuario.id}/estado`,
           { habilitado: nuevoEstado },
           { headers: this.headers() }
         )
@@ -97,7 +97,7 @@ export class Dashboard implements OnInit {
     try {
       await firstValueFrom(
         this.http.patch(
-          `http://localhost:3000/api/admin/usuarios/${usuario.id}/requiere-cambio-password`,
+          `https://epigrafe.onrender.com/api/admin/usuarios/${usuario.id}/requiere-cambio-password`,
           { requiereCambioPassword: nuevoValor },
           { headers: this.headers() }
         )

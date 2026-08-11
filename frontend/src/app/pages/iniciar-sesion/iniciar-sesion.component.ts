@@ -20,7 +20,7 @@ export class IniciarSesion {
   iniciarSesion() {
     const credenciales = { correo: this.correo, password: this.password };
 
-    this.http.post<any>('http://localhost:3000/api/auth/login', credenciales)
+    this.http.post<any>('https://epigrafe.onrender.com/api/auth/login', credenciales)
       .subscribe({
         next: (res) => {
           // Guardar token y datos del usuario en localStorage

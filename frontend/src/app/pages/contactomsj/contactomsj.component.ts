@@ -44,7 +44,7 @@ export class Contactomsj {
     try {
       await firstValueFrom(
         this.http.post<{ mensaje: string; id: number }>(
-          'http://localhost:3000/api/contacto',
+          'https://epigrafe.onrender.com/api/contacto',
           this.form
         )
       );

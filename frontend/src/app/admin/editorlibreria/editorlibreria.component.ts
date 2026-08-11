@@ -12,7 +12,7 @@ export class EditorLibreria {
   nuevoLibro = { titulo: '', autor: '', precio: 0, imagen: '' };
 
   agregarLibro() {
-    // Aquí llamarías a: this.http.post('http://localhost:3000/api/libros', this.nuevoLibro)...
+    // Aquí llamarías a: this.http.post('https://epigrafe.onrender.com/api/libros', this.nuevoLibro)...
     this.catalogo.push({ ...this.nuevoLibro, categoria: 'General', destacado: false });
     this.nuevoLibro = { titulo: '', autor: '', precio: 0, imagen: '' };
   }
