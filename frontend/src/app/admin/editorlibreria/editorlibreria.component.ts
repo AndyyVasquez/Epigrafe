@@ -13,8 +13,12 @@ import { ToastService } from '../../services/toast.service';
 })
 export class EditorLibreria implements OnInit {
   productos: any[] = [];
-  categoriaActiva: string = 'libro'; // 'libro', 'bebida', 'postre', 'promocion', 'merch'
+  categoriaActiva: string = 'libro';
   busqueda: string = '';
+  
+  // Control de edición
+  modoEdicion: boolean = false;
+  productoEditandoId: number | null = null;
 
   nuevo = {
     categoria: 'libro',
@@ -44,15 +48,15 @@ export class EditorLibreria implements OnInit {
 
   cambiarPestana(cat: string) {
     this.categoriaActiva = cat;
-    this.nuevo.categoria = cat; // Sincroniza la categoría del formulario
+    this.cancelarEdicion();
+    this.nuevo.categoria = cat;
   }
 
   get productosFiltrados() {
     return this.productos.filter(p => {
       const coincideCat = p.categoria === this.categoriaActiva;
       const texto = (p.titulo || p.nombre || '').toLowerCase();
-      const coincideBusqueda = texto.includes(this.busqueda.toLowerCase());
-      return coincideCat && coincideBusqueda;
+      return coincideCat && texto.includes(this.busqueda.toLowerCase());
     });
   }
 
@@ -61,25 +65,69 @@ export class EditorLibreria implements OnInit {
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
-        this.nuevo.imagen = reader.result as string; // Convierte la imagen a String Base64
+        this.nuevo.imagen = reader.result as string;
       };
       reader.readAsDataURL(file);
     }
   }
 
   guardarProducto() {
-    this.http.post(this.apiUrl, this.nuevo).subscribe({
-      next: () => {
-        this.toast.info('¡Producto guardado con éxito!');
-        this.cargarCatalogo();
-        this.nuevo.titulo = '';
-        this.nuevo.descripcion = '';
-        this.nuevo.precio = 0;
-        this.nuevo.stock = 0;
-        this.nuevo.imagen = '';
-      },
-      error: () => this.toast.info('Error al guardar el producto.')
-    });
+    if (this.modoEdicion && this.productoEditandoId !== null) {
+      // Petición PUT para actualizar
+      this.http.put(`${this.apiUrl}/${this.productoEditandoId}`, this.nuevo).subscribe({
+        next: () => {
+          this.toast.info('¡Producto actualizado con éxito!');
+          this.cargarCatalogo();
+          this.cancelarEdicion();
+        },
+        error: () => this.toast.info('Error al actualizar el producto.')
+      });
+    } else {
+      // Petición POST para crear nuevo
+      this.http.post(this.apiUrl, this.nuevo).subscribe({
+        next: () => {
+          this.toast.info('¡Producto creado con éxito!');
+          this.cargarCatalogo();
+          this.limpiarFormulario();
+        },
+        error: () => this.toast.info('Error al guardar el producto.')
+      });
+    }
+  }
+
+  cargarParaEditar(item: any) {
+    this.modoEdicion = true;
+    this.productoEditandoId = item.id;
+    this.nuevo = {
+      categoria: item.categoria,
+      titulo: item.titulo || item.nombre,
+      autor: item.autor || '',
+      descripcion: item.descripcion || '',
+      precio: item.precio,
+      stock: item.stock,
+      imagen: item.imagen || '',
+      tipo_etiqueta: item.tipo_etiqueta || 'General'
+    };
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  cancelarEdicion() {
+    this.modoEdicion = false;
+    this.productoEditandoId = null;
+    this.limpiarFormulario();
+  }
+
+  limpiarFormulario() {
+    this.nuevo = {
+      categoria: this.categoriaActiva,
+      titulo: '',
+      autor: '',
+      descripcion: '',
+      precio: 0,
+      stock: 0,
+      imagen: '',
+      tipo_etiqueta: 'General'
+    };
   }
 
   eliminarProducto(id: number) {

@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; // Necesario para ngModel
+import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 import { Carrito } from '../../services/carrito.service';
 import { ToastService } from '../../services/toast.service';
 
@@ -11,35 +12,54 @@ import { ToastService } from '../../services/toast.service';
   templateUrl: './libreria.component.html',
   styleUrls: ['./libreria.component.css']
 })
-export class Libreria {
-
-  
+export class Libreria implements OnInit {
   terminoBusqueda: string = '';
   filtroCategoria: string = 'todos';
+  libros: any[] = [];
 
-  // Lista de ejemplo (conéctala a tu servicio o arreglo existente)
-  libros = [
-    
- { titulo: 'El trato', autor: 'Elle Kennedy', categoria: 'Romance', precio: 290, imagen: '/img/thedeal.png', destacado:false },
-    { titulo: 'Orgullo y Prejuicio', autor: 'Jane Austen', categoria: 'Clásicos', precio: 220, imagen: '/img/orgulloprejuicio.png', destacado:false },
-    { titulo: 'Hábitos Atómicos', autor: 'James Clear', categoria: 'Productividad', precio: 350, imagen: '/img/libro-habitos.png', destacado:false },
-    { titulo: 'Cien Años de Soledad', autor: 'Gabriel García Márquez', categoria: 'Clásicos', precio: 320, imagen: '/img/libro-cien.png', destacado:false },
-    { titulo: 'El Psicoanalista', autor: 'John Katzenbach', categoria: 'Misterio', precio: 280, imagen: '/img/libro-psico.png', destacado:false }
-  ];
+  private apiUrl = 'https://epigrafe.onrender.com/api/catalogo?categoria=libro';
+
+  constructor(
+    private http: HttpClient,
+    private carritoService: Carrito, 
+    private toast: ToastService
+  ) {}
+
+  ngOnInit() {
+    this.cargarLibros();
+  }
+
+  cargarLibros() {
+    this.http.get<any[]>(this.apiUrl).subscribe({
+      next: (data) => {
+        this.libros = data.map(libro => ({ ...libro, destacado: false }));
+      },
+      error: (err) => {
+        console.error('Error al cargar libros:', err);
+        this.toast.info('No se pudieron cargar los libros del servidor.');
+      }
+    });
+  }
 
   get librosFiltrados() {
     return this.libros.filter(libro => {
-      const coincideTexto = libro.titulo.toLowerCase().includes(this.terminoBusqueda.toLowerCase()) ||
-                            libro.autor.toLowerCase().includes(this.terminoBusqueda.toLowerCase());
-      const coincideCat = this.filtroCategoria === 'todos' || libro.categoria === this.filtroCategoria;
+      const titulo = libro.titulo || libro.nombre || '';
+      const autor = libro.autor || '';
+      const categoria = libro.categoria || '';
+
+      const coincideTexto = titulo.toLowerCase().includes(this.terminoBusqueda.toLowerCase()) ||
+                            autor.toLowerCase().includes(this.terminoBusqueda.toLowerCase());
+      const coincideCat = this.filtroCategoria === 'todos' || categoria.toLowerCase() === this.filtroCategoria.toLowerCase();
       return coincideTexto && coincideCat;
     });
   }
 
-constructor(private carritoService: Carrito, private toast: ToastService) {}
-
-comprarParaPickup(libro: any) {
-  this.carritoService.agregarAlCarrito(libro);
-  this.toast.info(`"${libro.titulo}" añadido para pickup.`);
-}
+  comprarParaPickup(libro: any) {
+    if (libro.stock <= 0) {
+      this.toast.info('Este producto se encuentra agotado.');
+      return;
+    }
+    this.carritoService.agregarAlCarrito(libro);
+    this.toast.info(`"${libro.titulo || libro.nombre}" añadido para pickup.`);
+  }
 }
