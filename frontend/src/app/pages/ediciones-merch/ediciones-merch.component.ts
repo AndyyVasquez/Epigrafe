@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ToastService } from '../../services/toast.service';
+import { Carrito } from '../../services/carrito.service';
 
 @Component({
   selector: 'app-ediciones-merch',
@@ -8,7 +10,16 @@ import { CommonModule } from '@angular/common';
   templateUrl: './ediciones-merch.component.html'
 })
 export class EdicionesMerch {
-  // Catálogo enfocado en productos de valor añadido
+  
+   constructor(
+    private carrito: Carrito,
+    private toast: ToastService
+  ) {}
+
+  agregarAlCarrito(item: any) {
+    this.carrito.agregarAlCarrito(item);
+    this.toast.info(`¡"${item.titulo || item.nombre}" agregado al pickup!`);
+  }
   items = [
     { nombre: 'Taza de Cerámica Epígrafe', precio: 185, categoria: 'Merch', imagen: '/img/merch-taza.png' },
     { nombre: 'Separador de Madera Tallada', precio: 95, categoria: 'Merch', imagen: '/img/merch-separador.png' },

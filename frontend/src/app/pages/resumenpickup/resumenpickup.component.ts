@@ -42,7 +42,28 @@ export class ResumenPickup implements OnInit {
   }
 
   calcularTotal() {
-    this.total = this.productos.reduce((acc, item) => acc + Number(item.precio || 0), 0);
+    let subtotal = 0;
+    let porcentajeDescuento = 0;
+
+    // 1. Primero sumamos los productos normales y detectamos si hay cupones de descuento
+    this.productos.forEach(item => {
+      const nombreItem = (item.titulo || item.nombre || '').toLowerCase();
+
+      // Si el item es el descuento universitario u otra promo de porcentaje
+      if (nombreItem.includes('descuento universitario') || nombreItem.includes('15%')) {
+        porcentajeDescuento = 15; // 15% de descuento
+      } else {
+        subtotal += Number(item.precio || 0);
+      }
+    });
+
+    // 2. Aplicamos el descuento si existe
+    if (porcentajeDescuento > 0) {
+      const descuento = (subtotal * porcentajeDescuento) / 100;
+      this.total = Math.max(0, subtotal - descuento);
+    } else {
+      this.total = subtotal;
+    }
   }
 
   eliminarItem(index: number) {

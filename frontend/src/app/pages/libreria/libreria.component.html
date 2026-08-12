@@ -61,10 +61,11 @@
 
           <div class="flex justify-between items-center pt-2 border-t border-gray-100">
             <span class="font-bold text-verde-epigrafe">${{ libro.precio }}</span>
-              <button (click)="comprarParaPickup(libro)"
-          class="w-full bg-verde-epigrafe text-crema-fondo py-2.5 rounded-xl font-bold text-sm hover:bg-opacity-90 transition-colors">
-          Apartar (Pickup)
-        </button>
+            <button click="comprarParaPickup(libro)"
+            class="bg-crema-fondo text-verde-epigrafe px-4 py-2 rounded-lg text-sm font-bold hover:bg-verde-epigrafe hover:text-white transition-colors">
+              Apartar (Pickup)
+            </button>
+            
           </div>
         </div>
       } @empty {
