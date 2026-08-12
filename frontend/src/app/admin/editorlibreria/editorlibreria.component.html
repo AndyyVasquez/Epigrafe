@@ -35,40 +35,51 @@
   </div>
 
 <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-10">
-  <h2 class="font-bold text-lg text-verde-epigrafe mb-4">Agregar nuevo {{ categoriaActiva }}</h2>
+    <h2 class="font-bold text-lg text-verde-epigrafe mb-4">Agregar nuevo {{ categoriaActiva }}</h2>
+    
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+      <input type="text" [(ngModel)]="nuevo.titulo" placeholder="Título / Nombre" class="px-4 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-verde-epigrafe">
+      
+      @if (categoriaActiva === 'libro') {
+        <input type="text" [(ngModel)]="nuevo.autor" placeholder="Autor" class="px-4 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-verde-epigrafe">
+      } @else {
+        <input type="text" [(ngModel)]="nuevo.tipo_etiqueta" placeholder="Etiqueta (ej. Caliente, Frío)" class="px-4 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-verde-epigrafe">
+      }
 
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-    <input type="text" [(ngModel)]="nuevo.titulo" placeholder="Título / Nombre"
-      class="px-4 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-verde-epigrafe">
-
-    @if (categoriaActiva === 'libro') {
-    <input type="text" [(ngModel)]="nuevo.autor" placeholder="Autor"
-      class="px-4 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-verde-epigrafe">
-    } @else {
-    <input type="text" [(ngModel)]="nuevo.tipo_etiqueta" placeholder="Etiqueta (ej. Caliente, Frío)"
-      class="px-4 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-verde-epigrafe">
-    }
-
-     <input type="number" [ngModel]="nuevo.precio === 0 ? null : nuevo.precio" (ngModelChange)="nuevo.precio = $event"
+       <input type="number" [ngModel]="nuevo.precio === 0 ? null : nuevo.precio" (ngModelChange)="nuevo.precio = $event"
       placeholder="Precio ($)"
       class="px-4 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-verde-epigrafe">
           <input type="number" [ngModel]="nuevo.stock === 0 ? null : nuevo.stock" (ngModelChange)="nuevo.stock = $event"
       placeholder="Stock inicial"
       class="px-4 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-verde-epigrafe">
-  </div>
+      
+    </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-    <input type="text" [(ngModel)]="nuevo.imagen" placeholder="URL de la imagen (ej. img/bebida.jpg)"
-      class="px-4 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-verde-epigrafe">
-    <textarea [(ngModel)]="nuevo.descripcion" placeholder="Descripción breve..." rows="1"
-      class="px-4 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-verde-epigrafe"></textarea>
-  </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 items-center">
+      <!-- Cargar Imagen desde Archivos Locales -->
+      <div class="flex items-center gap-4">
+        <label class="flex-1">
+          <span class="block text-xs font-semibold text-gray-600 mb-1">Seleccionar imagen local</span>
+          <input 
+            type="file" 
+            (change)="onFileSelected($event)" 
+            accept="image/*" 
+            class="block w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-verde-epigrafe file:text-white hover:file:opacity-90 cursor-pointer">
+        </label>
+        
+        <!-- Vista previa pequeñita si ya seleccionó imagen -->
+        @if (nuevo.imagen) {
+          <img [src]="nuevo.imagen" class="h-12 w-12 object-cover rounded-lg border border-gray-200">
+        }
+      </div>
 
-  <button (click)="guardarProducto()"
-    class="bg-verde-epigrafe text-crema-fondo px-6 py-2.5 rounded-xl font-bold text-sm hover:opacity-95 transition-colors shadow">
-    Guardar Producto
-  </button>
-</div>
+      <textarea [(ngModel)]="nuevo.descripcion" placeholder="Descripción breve..." rows="1" class="px-4 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-verde-epigrafe"></textarea>
+    </div>
+
+    <button (click)="guardarProducto()" class="bg-verde-epigrafe text-crema-fondo px-6 py-2.5 rounded-xl font-bold text-sm hover:opacity-95 transition-colors shadow">
+      Guardar Producto
+    </button>
+  </div>
 
 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
     @for (item of productosFiltrados; track item.id) {

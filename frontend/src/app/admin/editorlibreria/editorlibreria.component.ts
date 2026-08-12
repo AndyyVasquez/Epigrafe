@@ -22,8 +22,8 @@ export class EditorLibreria implements OnInit {
     autor: '',
     descripcion: '',
     precio: 0,
-    stock: 10,
-    imagen: 'img/default.jpg',
+    stock: 0,
+    imagen: '',
     tipo_etiqueta: 'General'
   };
 
@@ -56,6 +56,17 @@ export class EditorLibreria implements OnInit {
     });
   }
 
+  onFileSelected(event: any) {
+    const file: File = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.nuevo.imagen = reader.result as string; // Convierte la imagen a String Base64
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
   guardarProducto() {
     this.http.post(this.apiUrl, this.nuevo).subscribe({
       next: () => {
@@ -64,6 +75,8 @@ export class EditorLibreria implements OnInit {
         this.nuevo.titulo = '';
         this.nuevo.descripcion = '';
         this.nuevo.precio = 0;
+        this.nuevo.stock = 0;
+        this.nuevo.imagen = '';
       },
       error: () => this.toast.info('Error al guardar el producto.')
     });
