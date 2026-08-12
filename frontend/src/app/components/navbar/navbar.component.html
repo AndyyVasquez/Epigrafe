@@ -44,7 +44,42 @@
         </div>
       </li>
 
+     
+
       <li class="relative group">
+        <a class="flex items-center gap-1 hover:text-white transition-colors pb-1 border-b-2 border-transparent hover:border-white cursor-pointer">
+          Comunidad
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 opacity-70 transition-transform group-hover:rotate-180" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+          </svg>
+        </a>
+        <div class="absolute left-0 top-full pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+          <div class="w-56 bg-white rounded-lg shadow-xl border border-gray-100 overflow-hidden py-2 text-gray-700">
+            <a href="/clublectura" class="block px-5 py-3 hover:bg-crema-fondo hover:text-verde-epigrafe transition-colors">Club de Lectura</a>
+            <a href="/eventos" class="block px-5 py-3 hover:bg-crema-fondo hover:text-verde-epigrafe transition-colors">Eventos Culturales</a>
+            <a href="/beneficios" class="block px-5 py-3 hover:bg-crema-fondo hover:text-verde-epigrafe transition-colors">Beneficios Epígrafes</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="relative group">
+        <a class="flex items-center gap-1 hover:text-white transition-colors pb-1 border-b-2 border-transparent hover:border-white cursor-pointer">
+          Contacto
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 opacity-70 transition-transform group-hover:rotate-180" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+          </svg>
+        </a>
+        <div class="absolute right-0 top-full pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+          <div class="w-56 bg-white rounded-lg shadow-xl border border-gray-100 overflow-hidden py-2 text-gray-700">
+            <a href="/contacto/ubicacion" class="block px-5 py-3 hover:bg-crema-fondo hover:text-verde-epigrafe transition-colors">Ubicación y Horarios</a>
+            <a href="/contacto/faq" class="block px-5 py-3 hover:bg-crema-fondo hover:text-verde-epigrafe transition-colors">Preguntas Frecuentes</a>
+            <a href="/contacto/facturacion" class="block px-5 py-3 hover:bg-crema-fondo hover:text-verde-epigrafe transition-colors">Facturación</a>
+            <a routerLink="/contacto/mensaje" class="block px-5 py-3 hover:bg-crema-fondo hover:text-verde-epigrafe transition-colors">Escríbenos</a>
+          </div>
+        </div>
+      </li>
+
+       <li class="relative group">
         @if (authService.user$ | async; as user) {
           <a class="flex items-center gap-2.5 hover:text-white transition-colors pb-1 border-b-2 border-transparent hover:border-white cursor-pointer">
             <span class="flex items-center justify-center h-8 w-8 rounded-full bg-white/15 text-white text-sm font-semibold uppercase ring-1 ring-white/30">
@@ -91,39 +126,6 @@
             </div>
           </div>
         }
-      </li>
-
-      <li class="relative group">
-        <a class="flex items-center gap-1 hover:text-white transition-colors pb-1 border-b-2 border-transparent hover:border-white cursor-pointer">
-          Comunidad
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 opacity-70 transition-transform group-hover:rotate-180" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-          </svg>
-        </a>
-        <div class="absolute left-0 top-full pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
-          <div class="w-56 bg-white rounded-lg shadow-xl border border-gray-100 overflow-hidden py-2 text-gray-700">
-            <a href="/clublectura" class="block px-5 py-3 hover:bg-crema-fondo hover:text-verde-epigrafe transition-colors">Club de Lectura</a>
-            <a href="/eventos" class="block px-5 py-3 hover:bg-crema-fondo hover:text-verde-epigrafe transition-colors">Eventos Culturales</a>
-            <a href="/beneficios" class="block px-5 py-3 hover:bg-crema-fondo hover:text-verde-epigrafe transition-colors">Beneficios Epígrafes</a>
-          </div>
-        </div>
-      </li>
-
-      <li class="relative group">
-        <a class="flex items-center gap-1 hover:text-white transition-colors pb-1 border-b-2 border-transparent hover:border-white cursor-pointer">
-          Contacto
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 opacity-70 transition-transform group-hover:rotate-180" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-          </svg>
-        </a>
-        <div class="absolute right-0 top-full pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
-          <div class="w-56 bg-white rounded-lg shadow-xl border border-gray-100 overflow-hidden py-2 text-gray-700">
-            <a href="/contacto/ubicacion" class="block px-5 py-3 hover:bg-crema-fondo hover:text-verde-epigrafe transition-colors">Ubicación y Horarios</a>
-            <a href="/contacto/faq" class="block px-5 py-3 hover:bg-crema-fondo hover:text-verde-epigrafe transition-colors">Preguntas Frecuentes</a>
-            <a href="/contacto/facturacion" class="block px-5 py-3 hover:bg-crema-fondo hover:text-verde-epigrafe transition-colors">Facturación</a>
-            <a routerLink="/contacto/mensaje" class="block px-5 py-3 hover:bg-crema-fondo hover:text-verde-epigrafe transition-colors">Escríbenos</a>
-          </div>
-        </div>
       </li>
     </ul>
 
