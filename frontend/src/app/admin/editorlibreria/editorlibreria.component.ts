@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -33,23 +33,29 @@ export class EditorLibreria implements OnInit {
 
   private apiUrl = 'https://epigrafe.onrender.com/api/catalogo';
 
-  constructor(private http: HttpClient, private toast: ToastService) {}
+  constructor(private http: HttpClient, private toast: ToastService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.cargarCatalogo();
   }
 
-  cargarCatalogo() {
+cargarCatalogo() {
     this.http.get<any[]>(this.apiUrl).subscribe({
-      next: (data) => this.productos = data,
-      error: () => this.toast.info('Error al cargar el inventario.')
+      next: (data) => {
+        this.productos = data || [];
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.productos = [];
+        this.toast.info('Error al cargar el inventario.');
+      }
     });
   }
-
   cambiarPestana(cat: string) {
     this.categoriaActiva = cat;
     this.cancelarEdicion();
     this.nuevo.categoria = cat;
+    this.cdr.detectChanges();
   }
 
   get productosFiltrados() {
