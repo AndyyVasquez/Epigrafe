@@ -341,6 +341,29 @@ app.post('/api/catalogo', async (req, res) => {
     }
 });
 
+// ACTUALIZAR PRODUCTO (CRUD - Admin)
+app.put('/api/catalogo/:id', async (req, res) => {
+    const { id } = req.params;
+    const { categoria, titulo, autor, descripcion, precio, stock, imagen, tipo_etiqueta } = req.body;
+    try {
+        const actualizado = await pool.query(
+            `UPDATE productos_catalogo 
+             SET categoria = $1, titulo = $2, autor = $3, descripcion = $4, precio = $5, stock = $6, imagen = $7, tipo_etiqueta = $8 
+             WHERE id = $9 RETURNING *`,
+            [categoria, titulo, autor, descripcion, precio, stock, imagen, tipo_etiqueta, id]
+        );
+
+        if (actualizado.rows.length === 0) {
+            return res.status(404).json({ error: 'Producto no encontrado' });
+        }
+
+        res.json({ mensaje: 'Producto actualizado con éxito', producto: actualizado.rows[0] });
+    } catch (err) {
+        console.error("Error al actualizar:", err);
+        res.status(500).json({ error: 'Error al actualizar el producto' });
+    }
+});
+
 // ELIMINAR PRODUCTO (CRUD - Admin)
 app.delete('/api/catalogo/:id', async (req, res) => {
     const { id } = req.params;
