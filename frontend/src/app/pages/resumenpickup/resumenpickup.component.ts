@@ -83,10 +83,18 @@ export class ResumenPickup implements OnInit {
   }
 
   confirmarPedido() {
+     const token = localStorage.getItem('token');
+  if (!token) {
+    this.toast.info('Inicia sesión para poder realizar tu apartado en pickup.');
+    this.router.navigate(['/login']);
+    return;
+  }
     if (this.productos.length === 0) {
       this.toast.info('Tu carrito de pickup está vacío.');
       return;
     }
+
+    
 
     if (!this.nombreCliente || !this.correoCliente) {
       this.toast.info('Por favor completa tu nombre y correo para el apartado.');

@@ -58,6 +58,18 @@
           </p>
         </div>
 
+         @if (postre.stock > 0) {
+          <button (click)="agregarAlCarrito(postre)"
+            class="w-full bg-verde-epigrafe text-crema-fondo py-2.5 rounded-xl font-bold text-sm hover:bg-opacity-90 transition-colors">
+            Agregar a la orden (Stock: {{ postre.stock }})
+          </button>
+        } @else {
+          <button disabled
+            class="w-full bg-gray-200 text-gray-400 py-2.5 rounded-xl font-bold text-sm cursor-not-allowed">
+            Agotado temporalmente
+          </button>
+        }
+
          <button (click)="agregarAlCarrito(postre)"
           class="w-full bg-verde-epigrafe text-crema-fondo py-2.5 rounded-xl font-bold text-sm hover:bg-opacity-90 transition-colors">
           Agregar a la orden

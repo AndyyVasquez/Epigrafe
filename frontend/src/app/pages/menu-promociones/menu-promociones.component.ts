@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { Carrito } from '../../services/carrito.service';
 import { ToastService } from '../../services/toast.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-menu-promociones',
@@ -11,8 +12,9 @@ import { ToastService } from '../../services/toast.service';
   templateUrl: './menu-promociones.component.html'
 })
 export class MenuPromociones {
-
+  promos: any[] = [];
    constructor(
+    private http: HttpClient,
     private carrito: Carrito,
     private toast: ToastService
   ) {}
@@ -21,30 +23,17 @@ export class MenuPromociones {
     this.carrito.agregarAlCarrito(item);
     this.toast.info(`¡"${item.titulo || item.nombre}" agregado al pickup!`);
   }
-  promociones = [
-    {
-      nombre: 'Combo Lector',
-      descripcion: 'Elige cualquier método de extracción manual + un postre de nuestra vitrina y llévate un separador de libros de edición especial.',
-      precioEspecial: 110,
-      etiqueta: 'Más Popular'
-    },
-    {
-      nombre: 'Descuento Universitario',
-      descripcion: 'Presenta tu credencial de estudiante universitario vigente y obtén un 15% de descuento en toda tu cuenta de cafetería.',
-      precioEspecial: null,
-      etiqueta: '-15% OFF'
-    },
-    {
-      nombre: 'Tardes de Club',
-      descripcion: 'Todos los jueves de 4:00 pm a 8:00 pm disfruta de un 2x1 en nuestro Latte de Especialidad y Americanos.',
-      precioEspecial: 65,
-      etiqueta: 'Jueves 2x1'
-    },
-    {
-      nombre: 'Lleva tu Boli',
-      descripcion: 'En la compra de cualquier libro de nuestra sección de novedades, llévate un boli artesanal de elote, frutos rojos u Oreo a mitad de precio.',
-      precioEspecial: 8.50,
-      etiqueta: 'Refrescante'
-    }
-  ];
+  ngOnInit() {
+    this.http.get<any[]>('https://epigrafe.onrender.com/api/catalogo?categoria=promocion')
+      .subscribe({
+        next: (data) => {
+          this.promos = data;
+        },
+        error: (err) => {
+          console.error('Error al cargar promociones:', err);
+          this.toast.info('No se pudieron cargar las promociones del servidor.');
+        }
+      });
+  }
+  
 }

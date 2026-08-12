@@ -26,7 +26,7 @@
       </div>
       <div>
         <label class="block text-sm font-medium mb-1">Teléfono</label>
-        <input [(ngModel)]="usuario.telefono" name="telefono" class="w-full p-3 border rounded-lg">
+        <input [(ngModel)]="usuario.telefono" name="telefono" type="tel" inputmode="numeric" pattern="^\d{10}$" minlength="10" maxlength="10" title="Introduce un teléfono de 10 dígitos (solo números)" class="w-full p-3 border rounded-lg">
       </div>
     </div>
 

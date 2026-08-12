@@ -1,31 +1,59 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 import { ToastService } from '../../services/toast.service';
 
 @Component({
-  selector: 'app-admin-libreria',
+  selector: 'app-editor-libreria',
   standalone: true,
-  imports: [FormsModule],
-  templateUrl: './editorlibreria.component.html'
+  imports: [CommonModule, FormsModule],
+  templateUrl: './editorlibreria.component.html',
+  styleUrl: './editorlibreria.component.css'
 })
-export class EditorLibreria {
-  catalogo: any[] = [/* ... tus libros actuales ... */];
-  nuevoLibro = { titulo: '', autor: '', precio: 0, imagen: '' };
+export class EditorLibreria implements OnInit {
+  productos: any[] = [];
+  nuevoProducto = {
+    categoria: 'bebida',
+    titulo: '',
+    autor: '',
+    descripcion: '',
+    precio: 0,
+    stock: 10,
+    imagen: '',
+    tipo_etiqueta: 'Caliente'
+  };
 
-  constructor(private toast: ToastService) {}
+  private apiUrl = 'https://epigrafe.onrender.com/api/catalogo';
 
-  agregarLibro() {
-    // Aquí llamarías a: this.http.post('https://epigrafe.onrender.com/api/libros', this.nuevoLibro)...
-    this.catalogo.push({ ...this.nuevoLibro, categoria: 'General', destacado: false });
-    this.nuevoLibro = { titulo: '', autor: '', precio: 0, imagen: '' };
+  constructor(private http: HttpClient, private toast: ToastService) {}
+
+  ngOnInit() {
+    this.cargarCatalogo();
   }
 
-  eliminarLibro(libro: any) {
-    this.catalogo = this.catalogo.filter(l => l !== libro);
+  cargarCatalogo() {
+    this.http.get<any[]>(this.apiUrl).subscribe(data => this.productos = data);
   }
 
-  editarLibro(libro: any) {
-    // Lógica para abrir un modal o formulario de edición
-    this.toast.info('Funcionalidad de edición activada para: ' + libro.titulo);
+  guardarProducto() {
+    this.http.post(this.apiUrl, this.nuevoProducto).subscribe({
+      next: () => {
+        this.toast.info('¡Producto agregado con éxito!');
+        this.cargarCatalogo();
+        this.nuevoProducto = { categoria: 'bebida', titulo: '', autor: '', descripcion: '', precio: 0, stock: 10, imagen: '', tipo_etiqueta: 'Caliente' };
+      },
+      error: () => this.toast.info('Error al guardar el producto.')
+    });
+  }
+
+  eliminarProducto(id: number) {
+    this.http.delete(`${this.apiUrl}/${id}`).subscribe({
+      next: () => {
+        this.toast.info('Producto eliminado.');
+        this.cargarCatalogo();
+      },
+      error: () => this.toast.info('Error al eliminar.')
+    });
   }
 }
