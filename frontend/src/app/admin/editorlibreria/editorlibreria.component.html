@@ -34,33 +34,51 @@
     </button>
   </div>
 
-  <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-10">
-    <h2 class="font-bold text-lg text-verde-epigrafe mb-4">Agregar nuevo {{ categoriaActiva }}</h2>
-    
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-      <input type="text" [(ngModel)]="nuevo.titulo" placeholder="Título / Nombre" class="px-4 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-verde-epigrafe">
-      
-      @if (categoriaActiva === 'libro') {
-        <input type="text" [(ngModel)]="nuevo.autor" placeholder="Autor" class="px-4 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-verde-epigrafe">
-      } @else {
-        <input type="text" [(ngModel)]="nuevo.tipo_etiqueta" placeholder="Etiqueta (ej. Caliente, Frío)" class="px-4 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-verde-epigrafe">
-      }
+<div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-10">
+  <h2 class="font-bold text-lg text-verde-epigrafe mb-4">Agregar nuevo {{ categoriaActiva }}</h2>
 
-      <input type="number" [ngModel]="nuevo.precio === 0 ? null : nuevo.precio" (ngModelChange)="nuevo.precio = $event" placeholder="Precio ($)" class="px-4 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-verde-epigrafe">
-      <input type="number" [ngModel]="nuevo.stock === 0 ? null : nuevo.stock" (ngModelChange)="nuevo.stock = $event" placeholder="Stock inicial" class="px-4 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-verde-epigrafe">
-    </div>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+    <input type="text" [(ngModel)]="nuevo.titulo" placeholder="Título / Nombre"
+      class="px-4 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-verde-epigrafe">
 
-    <textarea [(ngModel)]="nuevo.descripcion" placeholder="Descripción breve..." rows="2" class="w-full px-4 py-2 border rounded-xl text-sm mb-4 focus:outline-none focus:ring-2 focus:ring-verde-epigrafe"></textarea>
+    @if (categoriaActiva === 'libro') {
+    <input type="text" [(ngModel)]="nuevo.autor" placeholder="Autor"
+      class="px-4 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-verde-epigrafe">
+    } @else {
+    <input type="text" [(ngModel)]="nuevo.tipo_etiqueta" placeholder="Etiqueta (ej. Caliente, Frío)"
+      class="px-4 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-verde-epigrafe">
+    }
 
-    <button (click)="guardarProducto()" class="bg-verde-epigrafe text-crema-fondo px-6 py-2.5 rounded-xl font-bold text-sm hover:opacity-95 transition-colors shadow">
-      Guardar Producto
-    </button>
+     <input type="number" [ngModel]="nuevo.precio === 0 ? null : nuevo.precio" (ngModelChange)="nuevo.precio = $event"
+      placeholder="Precio ($)"
+      class="px-4 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-verde-epigrafe">
+          <input type="number" [ngModel]="nuevo.stock === 0 ? null : nuevo.stock" (ngModelChange)="nuevo.stock = $event"
+      placeholder="Stock inicial"
+      class="px-4 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-verde-epigrafe">
   </div>
 
-  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+    <input type="text" [(ngModel)]="nuevo.imagen" placeholder="URL de la imagen (ej. img/bebida.jpg)"
+      class="px-4 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-verde-epigrafe">
+    <textarea [(ngModel)]="nuevo.descripcion" placeholder="Descripción breve..." rows="1"
+      class="px-4 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-verde-epigrafe"></textarea>
+  </div>
+
+  <button (click)="guardarProducto()"
+    class="bg-verde-epigrafe text-crema-fondo px-6 py-2.5 rounded-xl font-bold text-sm hover:opacity-95 transition-colors shadow">
+    Guardar Producto
+  </button>
+</div>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
     @for (item of productosFiltrados; track item.id) {
       <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-between">
         <div>
+          <!-- Imagen del producto -->
+          <div class="relative overflow-hidden rounded-xl mb-3 h-40 bg-gray-50">
+            <img [src]="item.imagen || 'img/default.jpg'" [alt]="item.titulo || item.nombre" class="w-full h-full object-cover">
+          </div>
+
           <div class="flex justify-between items-start mb-2">
             <span class="text-[10px] uppercase font-bold px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full">{{ item.categoria }}</span>
             <span class="text-xs font-bold" [class.text-green-600]="item.stock > 3" [class.text-red-500]="item.stock <= 3">
