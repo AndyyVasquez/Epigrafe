@@ -21,6 +21,7 @@ import { IniciarSesion } from './pages/iniciar-sesion/iniciar-sesion.component';
 import { Registro } from './pages/registro/registro.component';
 import { authGuard } from './auth-guard';
 import { ResumenPickup } from './pages/resumenpickup/resumenpickup.component';
+import { Profile } from './pages/profile/profile.component';
 
 
 export const routes: Routes = [
@@ -41,6 +42,7 @@ export const routes: Routes = [
   { path: 'contacto/facturacion', component: Facturacion },
   { path: 'contacto/mensaje', component: Contactomsj },
   { path: 'terminos/terminos', component: Terminos },
+  { path: 'profile', component: Profile }, 
   { path: 'login', component: IniciarSesion },
   { path: 'registro', component: Registro },
   {

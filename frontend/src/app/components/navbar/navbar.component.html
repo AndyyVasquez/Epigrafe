@@ -106,7 +106,8 @@
                 <p class="font-semibold text-texto-principal leading-tight">{{ user.nombre }}</p>
                 <p class="text-xs text-gray-400">{{ user.rol }}</p>
               </div>
-
+              <a routerLink="/profile" class="block px-5 py-3 hover:bg-crema-fondo hover:text-verde-epigrafe transition-colors">Mi Perfil y Contraseña</a>
+              
               @if (user.rol === 'Administrador') {
                 <a routerLink="/admin/dashboard" class="block px-5 py-3 hover:bg-crema-fondo hover:text-verde-epigrafe transition-colors">Panel de administración</a>
               }
@@ -160,13 +161,16 @@
     <a routerLink="/contacto/mensaje" (click)="closeMenu()" class="block py-2 font-medium hover:text-white transition-colors">Contacto / Escríbenos</a>
     
     <div class="pt-3 border-t border-amber-800">
-      @if (authService.user$ | async; as user) {
-        <p class="text-sm font-semibold mb-2">Hola, {{ user.nombre }}</p>
-        <button (click)="cerrarSesion()" class="w-full text-left py-2 text-red-200 font-medium">Cerrar sesión</button>
-      } @else {
-        <a routerLink="/login" (click)="closeMenu()" class="block py-2 font-bold text-white">Iniciar Sesión</a>
-        <a routerLink="/registro" (click)="closeMenu()" class="block py-2 font-medium text-amber-200">¡Regístrate!</a>
-      }
-    </div>
+  @if (authService.user$ | async; as user) {
+    <!-- Al dar clic en el nombre va al perfil y cierra el menú -->
+    <a routerLink="/profile" (click)="closeMenu()" class="block text-sm font-semibold mb-2 hover:text-white transition-colors">
+      Hola, {{ user.nombre }} (Ver perfil)
+    </a>
+    <button (click)="cerrarSesion()" class="w-full text-left py-2 text-red-200 font-medium">Cerrar sesión</button>
+  } @else {
+    <a routerLink="/login" (click)="closeMenu()" class="block py-2 font-bold text-white">Iniciar Sesión</a>
+    <a routerLink="/registro" (click)="closeMenu()" class="block py-2 font-medium text-amber-200">¡Regístrate!</a>
+  }
+</div>
   </div>
 </nav>

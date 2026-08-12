@@ -8,25 +8,8 @@ import { ToastService } from '../../services/toast.service';
   selector: 'app-profile',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  template: `
-    <div class="max-w-md mx-auto px-6 py-12 bg-white rounded-xl shadow-sm border mt-10">
-      <h2 class="text-2xl font-bold text-verde-epigrafe mb-6">Mi Perfil / Seguridad</h2>
-      
-      <div class="space-y-4">
-        <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1">Contraseña Actual</label>
-          <input type="password" [(ngModel)]="passwordActual" class="w-full px-3 py-2 border rounded-lg text-sm">
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1">Nueva Contraseña</label>
-          <input type="password" [(ngModel)]="nuevoPassword" class="w-full px-3 py-2 border rounded-lg text-sm">
-        </div>
-        <button (click)="cambiarPassword()" class="w-full bg-verde-epigrafe text-crema-fondo py-2.5 rounded-xl font-bold text-sm">
-          Actualizar Contraseña
-        </button>
-      </div>
-    </div>
-  `
+  templateUrl: './profile.component.html',
+  styleUrl: './profile.component.css'
 })
 export class Profile {
   passwordActual = '';
@@ -36,7 +19,10 @@ export class Profile {
 
   cambiarPassword() {
     const usuarioStr = localStorage.getItem('usuario');
-    if (!usuarioStr) return;
+    if (!usuarioStr) {
+      this.toast.info('No hay sesión activa.');
+      return;
+    }
     const usuario = JSON.parse(usuarioStr);
 
     this.http.put('https://epigrafe.onrender.com/api/usuarios/cambiar-password', {

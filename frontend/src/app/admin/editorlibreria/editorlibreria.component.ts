@@ -12,16 +12,15 @@ import { ToastService } from '../../services/toast.service';
   styleUrl: './editorlibreria.component.css'
 })
 export class EditorLibreria implements OnInit {
-  productos: any[] = [];
-  nuevoProducto = {
-    categoria: 'bebida',
+  catalogo: any[] = [];
+  nuevoLibro = {
+    categoria: 'libro',
     titulo: '',
     autor: '',
     descripcion: '',
     precio: 0,
     stock: 10,
-    imagen: '',
-    tipo_etiqueta: 'Caliente'
+    imagen: 'img/libro-default.jpg'
   };
 
   private apiUrl = 'https://epigrafe.onrender.com/api/catalogo';
@@ -33,27 +32,31 @@ export class EditorLibreria implements OnInit {
   }
 
   cargarCatalogo() {
-    this.http.get<any[]>(this.apiUrl).subscribe(data => this.productos = data);
+    this.http.get<any[]>(this.apiUrl).subscribe(data => this.catalogo = data);
   }
 
-  guardarProducto() {
-    this.http.post(this.apiUrl, this.nuevoProducto).subscribe({
+  agregarLibro() {
+    this.http.post(this.apiUrl, this.nuevoLibro).subscribe({
       next: () => {
         this.toast.info('¡Producto agregado con éxito!');
         this.cargarCatalogo();
-        this.nuevoProducto = { categoria: 'bebida', titulo: '', autor: '', descripcion: '', precio: 0, stock: 10, imagen: '', tipo_etiqueta: 'Caliente' };
+        this.nuevoLibro = { categoria: 'libro', titulo: '', autor: '', descripcion: '', precio: 0, stock: 10, imagen: 'img/libro-default.jpg' };
       },
       error: () => this.toast.info('Error al guardar el producto.')
     });
   }
 
-  eliminarProducto(id: number) {
-    this.http.delete(`${this.apiUrl}/${id}`).subscribe({
+  eliminarLibro(libro: any) {
+    this.http.delete(`${this.apiUrl}/${libro.id}`).subscribe({
       next: () => {
         this.toast.info('Producto eliminado.');
         this.cargarCatalogo();
       },
       error: () => this.toast.info('Error al eliminar.')
     });
+  }
+
+  editarLibro(libro: any) {
+    this.toast.info(`Función de edición para: ${libro.titulo}`);
   }
 }
