@@ -217,29 +217,25 @@ app.patch('/api/admin/usuarios/:id/estado', verificarTokenyRol(['Administrador']
     }
 });
 
-// Marca o desmarca si el usuario debe cambiar su contraseña en el próximo login.
-app.patch('/api/admin/usuarios/:id/requiere-cambio-password', verificarTokenyRol(['Administrador']), async (req, res) => {
-    const { id } = req.params;
-    const { requiereCambioPassword } = req.body;
-
-    if (typeof requiereCambioPassword !== 'boolean') {
-        return res.status(400).json({ error: 'El campo "requiereCambioPassword" debe ser true o false.' });
-    }
-
+app.put('/api/usuarios/cambiar-password', async (req, res) => {
+    const { correo, passwordActual, nuevoPassword } = req.body;
     try {
-        const resultado = await pool.query(
-            'UPDATE usuarios SET requiere_cambio_password = $1 WHERE id = $2 RETURNING id, nombre, requiere_cambio_password',
-            [requiereCambioPassword, id]
-        );
+        const usuario = await pool.query('SELECT * FROM usuarios WHERE correo = $1', [correo]);
+        if (usuario.rows.length === 0) return res.status(404).json({ error: 'Usuario no encontrado' });
 
-        if (resultado.rows.length === 0) {
-            return res.status(404).json({ error: 'Usuario no encontrado.' });
-        }
+        // Aquí puedes validar con bcrypt si usas hash, o actualizar directamente:
+        const bcrypt = require('bcryptjs');
+        const match = await bcrypt.compare(passwordActual, usuario.rows[0].password);
+        
+        if (!match) return res.status(400).json({ error: 'La contraseña actual es incorrecta' });
 
-        res.json({ mensaje: 'Actualizado correctamente.', usuario: resultado.rows[0] });
+        const salt = await bcrypt.genSalt(10);
+        const hashNuevo = await bcrypt.hash(nuevoPassword, salt);
+
+        await pool.query('UPDATE usuarios SET password = $1 WHERE correo = $2', [hashNuevo, correo]);
+        res.json({ mensaje: '¡Contraseña actualizada con éxito!' });
     } catch (err) {
-        console.error('Error al actualizar requiere_cambio_password:', err);
-        res.status(500).json({ error: 'No se pudo actualizar el usuario.' });
+        res.status(500).json({ error: 'Error del servidor al cambiar contraseña' });
     }
 });
 
@@ -262,22 +258,95 @@ app.post('/api/contacto', async (req, res) => {
 app.post('/api/pedidos', async (req, res) => {
     const { usuario_id, nombre_cliente, correo_cliente, telefono_cliente, productos, total } = req.body;
 
+    // Restricción 1: Validar que tenga perfil/sesión obligatoria
+    if (!usuario_id || !correo_cliente) {
+        return res.status(401).json({ error: 'Debes iniciar sesión para realizar un pedido de pickup.' });
+    }
+
     try {
+        // Iniciar transacción para asegurar consistencia en el stock
+        await pool.query('BEGIN');
+
+        for (let item of productos) {
+            // Verificar stock actual (dependiendo de si es libro o bebida)
+            const tabla = item.tipo === 'libro' ? 'libros' : 'bebidas'; // Ajusta según tu estructura
+            
+            // O si manejas una sola tabla general de inventario/catalogo:
+            const checkStock = await pool.query('SELECT stock FROM catalogo WHERE id = $1', [item.id]);
+            
+            if (checkStock.rows.length > 0) {
+                const stockActual = checkStock.rows[0].stock;
+                if (stockActual <= 0) {
+                    await pool.query('ROLLBACK');
+                    return res.status(400).json({ error: `Lo sentimos, el producto "${item.titulo || item.nombre}" se ha agotado.` });
+                }
+                // Descontar del stock
+                await pool.query('UPDATE catalogo SET stock = stock - 1 WHERE id = $1', [item.id]);
+            }
+        }
+
+        // Guardar el pedido
         const query = `
-            INSERT INTO pedidos_pickup (usuario_id, nombre_cliente, correo_cliente, telefono_cliente, productos, total) 
-            VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;
+            INSERT INTO pedidos_pickup (usuario_id, nombre_cliente, correo_cliente, telefono_cliente, productos, total, estado) 
+            VALUES ($1, $2, $3, $4, $5, $6, 'Preparando en mostrador') RETURNING *;
         `;
-        const values = [usuario_id || null, nombre_cliente, correo_cliente, telefono_cliente, JSON.stringify(productos), total];
-        
+        const values = [usuario_id, nombre_cliente, correo_cliente, telefono_cliente, JSON.stringify(productos), total];
         const nuevoPedido = await pool.query(query, values);
+
+        await pool.query('COMMIT');
         
         res.status(201).json({ 
-            mensaje: '¡Pedido de pickup registrado con éxito!', 
+            mensaje: '¡Pedido confirmado! Te esperamos en mostrador.', 
             pedido: nuevoPedido.rows[0] 
         });
+
     } catch (err) {
-        console.error("Error al registrar el pedido:", err);
-        res.status(500).json({ error: 'No se pudo procesar el pedido. Intenta de nuevo.' });
+        await pool.query('ROLLBACK');
+        console.error("Error en pickup:", err);
+        res.status(500).json({ error: 'No se pudo procesar el pedido.' });
+    }
+});
+
+// OBTENER TODOS LOS PRODUCTOS O FILTRAR POR CATEGORÍA
+app.get('/api/catalogo', async (req, res) => {
+    const { categoria } = req.query;
+    try {
+        let query = 'SELECT * FROM productos_catalogo';
+        let values = [];
+        if (categoria) {
+            query += ' WHERE categoria = $1';
+            values.push(categoria);
+        }
+        const resultado = await pool.query(query, values);
+        res.json(resultado.rows);
+    } catch (err) {
+        res.status(500).json({ error: 'Error al obtener el catálogo' });
+    }
+});
+
+// CREAR PRODUCTO (CRUD - Admin)
+app.post('/api/catalogo', async (req, res) => {
+    const { categoria, titulo, autor, descripcion, precio, stock, imagen, tipo_etiqueta } = req.body;
+    try {
+        const nuevo = await pool.query(
+            `INSERT INTO productos_catalogo (categoria, titulo, autor, descripcion, precio, stock, imagen, tipo_etiqueta) 
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
+            [categoria, titulo, autor, descripcion, precio, stock, imagen, tipo_etiqueta]
+        );
+        res.status(201).json({ mensaje: 'Producto creado con éxito', producto: nuevo.rows[0] });
+    } catch (err) {
+        res.status(500).json({ error: 'Error al crear el producto' });
+    }
+});
+
+// ELIMINAR PRODUCTO (CRUD - Admin)
+app.delete('/api/catalogo/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        await pool.query('DELETE FROM productos_catalogo WHERE id = $1', [id]);
+        res.json({ mensaje: 'Producto eliminado correctamente' });
+    } catch (err) {
+        res.status(500).json({ error: 'Error al eliminar el producto' });
     }
 });
 
