@@ -243,6 +243,21 @@ app.patch('/api/admin/usuarios/:id/requiere-cambio-password', verificarTokenyRol
     }
 });
 
+//mensaje Escríbenos
+app.post('/api/contacto', async (req, res) => {
+    const { nombre, correo, asunto, mensaje } = req.body;
+    try {
+        const nuevoMensaje = await pool.query(
+            'INSERT INTO mensajes_contacto (nombre, correo, asunto, mensaje) VALUES ($1, $2, $3, $4) RETURNING *',
+            [nombre, correo, asunto, mensaje]
+        );
+        res.status(201).json({ mensaje: 'Mensaje enviado con éxito', id: nuevoMensaje.rows[0].id });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error interno en el servidor' });
+    }
+});
+
 //pedidos pickup
 app.post('/api/pedidos', async (req, res) => {
     const { usuario_id, nombre_cliente, correo_cliente, telefono_cliente, productos, total } = req.body;
