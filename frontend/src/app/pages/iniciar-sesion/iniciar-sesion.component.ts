@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { AuthService } from '../../auth.service';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-login',
@@ -15,7 +16,12 @@ export class IniciarSesion {
   correo = '';
   password = '';
 
-  constructor(private http: HttpClient, private router: Router, private authService: AuthService) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private authService: AuthService,
+    private toast: ToastService
+  ) {}
 
   iniciarSesion() {
     const credenciales = { correo: this.correo, password: this.password };
@@ -32,7 +38,7 @@ export class IniciarSesion {
           // solo, sin recargar la página.
           this.authService.updateUser(res.usuario);
 
-          alert('Bienvenido de nuevo, ' + res.usuario.nombre);
+          this.toast.exito('Bienvenido de nuevo, ' + res.usuario.nombre);
 
           // Redirección inteligente basada en el rol
           if (res.usuario.rol === 'Administrador') {
@@ -45,7 +51,7 @@ export class IniciarSesion {
         },
         error: (err) => {
           console.error(err);
-          alert(err.error.error || 'Error al iniciar sesión');
+          this.toast.error(err.error?.error || 'Error al iniciar sesión');
         }
       });
   }

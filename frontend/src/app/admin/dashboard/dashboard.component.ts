@@ -2,6 +2,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
+import { ToastService } from '../../services/toast.service';
 
 interface UsuarioAdmin {
   id: number;
@@ -34,7 +35,7 @@ export class Dashboard implements OnInit {
   error = signal('');
   procesandoId = signal<number | null>(null);
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private toast: ToastService) {}
 
   ngOnInit() {
     this.cargarUsuarios();
@@ -84,8 +85,9 @@ export class Dashboard implements OnInit {
       this.usuarios.update((lista) =>
         lista.map((u) => (u.id === usuario.id ? { ...u, habilitado: nuevoEstado } : u))
       );
+      this.toast.exito(nuevoEstado ? `Cuenta de ${usuario.nombre} habilitada.` : `Cuenta de ${usuario.nombre} deshabilitada.`);
     } catch (err: any) {
-      alert(err?.error?.error || 'No se pudo actualizar el estado de la cuenta.');
+      this.toast.error(err?.error?.error || 'No se pudo actualizar el estado de la cuenta.');
     } finally {
       this.procesandoId.set(null);
     }
@@ -106,7 +108,7 @@ export class Dashboard implements OnInit {
         lista.map((u) => (u.id === usuario.id ? { ...u, requiere_cambio_password: nuevoValor } : u))
       );
     } catch (err: any) {
-      alert(err?.error?.error || 'No se pudo actualizar el usuario.');
+      this.toast.error(err?.error?.error || 'No se pudo actualizar el usuario.');
     } finally {
       this.procesandoId.set(null);
     }

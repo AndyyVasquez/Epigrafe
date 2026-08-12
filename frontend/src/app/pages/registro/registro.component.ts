@@ -1,8 +1,8 @@
-
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { ToastService } from '../../services/toast.service';
 
 
 @Component({
@@ -15,16 +15,16 @@ import { Router } from '@angular/router';
 export class Registro {
   usuario = { nombre: '', apellidos: '', correo: '', password: '', telefono: '', genero: '', gusto_literario: '' };
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router, private toast: ToastService) {}
 
   registrarUsuario() {
     this.http.post('https://epigrafe.onrender.com/api/auth/registro', this.usuario)
       .subscribe({
         next: () => {
-          alert('Registro exitoso. ¡Bienvenido a Epígrafe!');
+          this.toast.exito('Registro exitoso. ¡Bienvenido a Epígrafe!');
           this.router.navigate(['/']);
         },
-        error: (err) => alert('Error al registrar: ' + err.error.error)
+        error: (err) => this.toast.error(err.error?.error || 'Error al registrar')
       });
   }
 }

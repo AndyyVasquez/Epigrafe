@@ -1,0 +1,49 @@
+<div class="fixed top-5 right-5 z-[100] flex flex-col gap-3 w-[calc(100%-2.5rem)] max-w-sm">
+  @for (toast of toastService.toasts(); track toast.id) {
+    <div
+      class="toast-item flex items-start gap-3 rounded-xl shadow-lg border px-4 py-3.5 backdrop-blur-sm"
+      [class.bg-green-50]="toast.tipo === 'exito'"
+      [class.border-green-200]="toast.tipo === 'exito'"
+      [class.bg-red-50]="toast.tipo === 'error'"
+      [class.border-red-200]="toast.tipo === 'error'"
+      [class.bg-blue-50]="toast.tipo === 'info'"
+      [class.border-blue-200]="toast.tipo === 'info'"
+    >
+      <!-- Ícono según el tipo -->
+      <div class="shrink-0 mt-0.5">
+        @if (toast.tipo === 'exito') {
+          <svg class="h-5 w-5 text-green-600" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M16.7 5.3a1 1 0 010 1.4l-7 7a1 1 0 01-1.4 0l-3-3a1 1 0 111.4-1.4l2.3 2.29 6.3-6.3a1 1 0 011.4 0z" clip-rule="evenodd"/>
+          </svg>
+        } @else if (toast.tipo === 'error') {
+          <svg class="h-5 w-5 text-red-600" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 10-2 0v4a1 1 0 102 0V6zm-1 8a1.25 1.25 0 100-2.5 1.25 1.25 0 000 2.5z" clip-rule="evenodd"/>
+          </svg>
+        } @else {
+          <svg class="h-5 w-5 text-blue-600" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a1 1 0 100 2 1 1 0 000-2zm-1 4a1 1 0 000 2h.01v3a1 1 0 001 1H11a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+          </svg>
+        }
+      </div>
+
+      <p
+        class="text-sm leading-snug flex-1"
+        [class.text-green-800]="toast.tipo === 'exito'"
+        [class.text-red-800]="toast.tipo === 'error'"
+        [class.text-blue-800]="toast.tipo === 'info'"
+      >
+        {{ toast.mensaje }}
+      </p>
+
+      <button
+        (click)="toastService.cerrar(toast.id)"
+        class="shrink-0 text-gray-400 hover:text-gray-600 transition-colors"
+        aria-label="Cerrar notificación"
+      >
+        <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+          <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z"/>
+        </svg>
+      </button>
+    </div>
+  }
+</div>
