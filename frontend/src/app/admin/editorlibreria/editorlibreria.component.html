@@ -46,7 +46,7 @@
         <input type="text" [(ngModel)]="nuevo.tipo_etiqueta" placeholder="Etiqueta (ej. Caliente, Frío)" class="px-4 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-verde-epigrafe">
       }
 
-      <input type="number" [(ngModel)]="nuevo.precio" placeholder="Precio ($)" class="px-4 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-verde-epigrafe">
+      <input type="number" [ngModel]="nuevo.precio === 0 ? null : nuevo.precio" (ngModelChange)="nuevo.precio = $event" placeholder="Precio ($)" class="px-4 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-verde-epigrafe">
       <input type="number" [(ngModel)]="nuevo.stock" placeholder="Stock inicial" class="px-4 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-verde-epigrafe">
     </div>
 
