@@ -12,15 +12,19 @@ import { ToastService } from '../../services/toast.service';
   styleUrl: './editorlibreria.component.css'
 })
 export class EditorLibreria implements OnInit {
-  catalogo: any[] = [];
-  nuevoLibro = {
+  productos: any[] = [];
+  categoriaActiva: string = 'libro'; // 'libro', 'bebida', 'postre', 'promocion', 'merch'
+  busqueda: string = '';
+
+  nuevo = {
     categoria: 'libro',
     titulo: '',
     autor: '',
     descripcion: '',
     precio: 0,
     stock: 10,
-    imagen: 'img/libro-default.jpg'
+    imagen: 'img/default.jpg',
+    tipo_etiqueta: 'General'
   };
 
   private apiUrl = 'https://epigrafe.onrender.com/api/catalogo';
@@ -32,31 +36,48 @@ export class EditorLibreria implements OnInit {
   }
 
   cargarCatalogo() {
-    this.http.get<any[]>(this.apiUrl).subscribe(data => this.catalogo = data);
+    this.http.get<any[]>(this.apiUrl).subscribe({
+      next: (data) => this.productos = data,
+      error: () => this.toast.info('Error al cargar el inventario.')
+    });
   }
 
-  agregarLibro() {
-    this.http.post(this.apiUrl, this.nuevoLibro).subscribe({
+  cambiarPestana(cat: string) {
+    this.categoriaActiva = cat;
+    this.nuevo.categoria = cat; // Sincroniza la categoría del formulario
+  }
+
+  get productosFiltrados() {
+    return this.productos.filter(p => {
+      const coincideCat = p.categoria === this.categoriaActiva;
+      const texto = (p.titulo || p.nombre || '').toLowerCase();
+      const coincideBusqueda = texto.includes(this.busqueda.toLowerCase());
+      return coincideCat && coincideBusqueda;
+    });
+  }
+
+  guardarProducto() {
+    this.http.post(this.apiUrl, this.nuevo).subscribe({
       next: () => {
-        this.toast.info('¡Producto agregado con éxito!');
+        this.toast.info('¡Producto guardado con éxito!');
         this.cargarCatalogo();
-        this.nuevoLibro = { categoria: 'libro', titulo: '', autor: '', descripcion: '', precio: 0, stock: 10, imagen: 'img/libro-default.jpg' };
+        this.nuevo.titulo = '';
+        this.nuevo.descripcion = '';
+        this.nuevo.precio = 0;
       },
       error: () => this.toast.info('Error al guardar el producto.')
     });
   }
 
-  eliminarLibro(libro: any) {
-    this.http.delete(`${this.apiUrl}/${libro.id}`).subscribe({
-      next: () => {
-        this.toast.info('Producto eliminado.');
-        this.cargarCatalogo();
-      },
-      error: () => this.toast.info('Error al eliminar.')
-    });
-  }
-
-  editarLibro(libro: any) {
-    this.toast.info(`Función de edición para: ${libro.titulo}`);
+  eliminarProducto(id: number) {
+    if (confirm('¿Estás segura de eliminar este producto?')) {
+      this.http.delete(`${this.apiUrl}/${id}`).subscribe({
+        next: () => {
+          this.toast.info('Producto eliminado.');
+          this.cargarCatalogo();
+        },
+        error: () => this.toast.info('No se pudo eliminar.')
+      });
+    }
   }
 }
