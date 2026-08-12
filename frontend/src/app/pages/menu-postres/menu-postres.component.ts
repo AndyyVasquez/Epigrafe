@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Carrito } from '../../services/carrito.service';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-menu-postres',
@@ -10,6 +12,17 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
   styleUrl: './menu-postres.component.css'
 })
 export class MenuPostres {
+
+   constructor(
+    private carrito: Carrito,
+    private toast: ToastService
+  ) {}
+
+  agregarAlCarrito(item: any) {
+    this.carrito.agregarAlCarrito(item);
+    this.toast.info(`¡"${item.titulo || item.nombre}" agregado al pickup!`);
+  }
+
   postres = [
     { nombre: 'Croissant Clásico', descripcion: 'Horneado cada mañana. Textura hojaldrada y mantequilla pura, perfecto para acompañar tu americano.', precio: 45, tipo: 'Panadería' },
     { nombre: 'Tarta de Higo y Nuez', descripcion: 'Base de masa quebrada, crema pastelera ligera y la dulzura natural del higo fresco.', precio: 85, tipo: 'Repostería' },

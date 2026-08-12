@@ -20,7 +20,6 @@ export class MenuBebidas {
   
   agregarAlCarrito(item: any) {
     this.carrito.agregarAlCarrito(item);
-    // Usamos tu Toast personalizado para avisarle al usuario
     this.toast.info(`¡"${item.titulo || item.nombre}" agregado al pickup!`);
   }
 

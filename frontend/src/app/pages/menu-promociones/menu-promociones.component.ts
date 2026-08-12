@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Carrito } from '../../services/carrito.service';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-menu-promociones',
@@ -9,6 +11,16 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
   templateUrl: './menu-promociones.component.html'
 })
 export class MenuPromociones {
+
+   constructor(
+    private carrito: Carrito,
+    private toast: ToastService
+  ) {}
+
+  agregarAlCarrito(item: any) {
+    this.carrito.agregarAlCarrito(item);
+    this.toast.info(`¡"${item.titulo || item.nombre}" agregado al pickup!`);
+  }
   promociones = [
     {
       nombre: 'Combo Lector',

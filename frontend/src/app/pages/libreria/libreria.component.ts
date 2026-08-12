@@ -12,6 +12,8 @@ import { ToastService } from '../../services/toast.service';
   styleUrls: ['./libreria.component.css']
 })
 export class Libreria {
+
+  
   terminoBusqueda: string = '';
   filtroCategoria: string = 'todos';
 
@@ -34,7 +36,6 @@ export class Libreria {
     });
   }
 
-  // En tu componente (ej. libreria.component.ts)
 constructor(private carritoService: Carrito, private toast: ToastService) {}
 
 comprarParaPickup(libro: any) {
