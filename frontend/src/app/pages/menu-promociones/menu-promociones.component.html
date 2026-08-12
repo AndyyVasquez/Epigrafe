@@ -36,7 +36,7 @@
 
   <!-- Cuadrícula de Promociones (Grid Dinámico) -->
   <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-    @for (promo of promociones; track promo.nombre) {
+    @for (promo of promos; track promo.nombre) {
       <div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 flex flex-col justify-between hover:shadow-lg transition-shadow relative overflow-hidden">
 
         <!-- Detalle visual: Una franja verde sutil en el borde superior -->
