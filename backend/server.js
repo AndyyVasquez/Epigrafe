@@ -158,11 +158,10 @@ app.get('/api/editor/catalogo', verificarTokenyRol(['Administrador', 'Editor']),
     res.json({ contenido: 'Módulo de edición de catálogo disponible.' });
 });
 
-// ---------------------------------------------------------------------------
+
 // Gestión de cuentas de usuario (solo Administrador)
 // Equivalente web de habilitar/deshabilitar cuentas de un sistema operativo:
 // una cuenta deshabilitada NUNCA se borra, solo se le impide iniciar sesión.
-// ---------------------------------------------------------------------------
 
 // Lista todos los usuarios con su estado, grupo (rol) y metadatos de cuenta.
 app.get('/api/admin/usuarios', verificarTokenyRol(['Administrador']), async (req, res) => {
@@ -243,6 +242,30 @@ app.patch('/api/admin/usuarios/:id/requiere-cambio-password', verificarTokenyRol
         res.status(500).json({ error: 'No se pudo actualizar el usuario.' });
     }
 });
+
+//pedidos pickup
+app.post('/api/pedidos', async (req, res) => {
+    const { usuario_id, nombre_cliente, correo_cliente, telefono_cliente, productos, total } = req.body;
+
+    try {
+        const query = `
+            INSERT INTO pedidos_pickup (usuario_id, nombre_cliente, correo_cliente, telefono_cliente, productos, total) 
+            VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;
+        `;
+        const values = [usuario_id || null, nombre_cliente, correo_cliente, telefono_cliente, JSON.stringify(productos), total];
+        
+        const nuevoPedido = await pool.query(query, values);
+        
+        res.status(201).json({ 
+            mensaje: '¡Pedido de pickup registrado con éxito!', 
+            pedido: nuevoPedido.rows[0] 
+        });
+    } catch (err) {
+        console.error("Error al registrar el pedido:", err);
+        res.status(500).json({ error: 'No se pudo procesar el pedido. Intenta de nuevo.' });
+    }
+});
+
 
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en el puerto ${PORT}`);
