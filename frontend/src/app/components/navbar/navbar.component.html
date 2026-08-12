@@ -1,8 +1,20 @@
 <nav class="w-full bg-verde-epigrafe text-crema-fondo shadow-md relative z-50">
-  <div class="w-full px-8 md:px-12 py-4 flex justify-between items-center">
+  <div class="w-full px-6 md:px-12 py-4 flex justify-between items-center">
     <a routerLink="/" class="flex-shrink-0 cursor-pointer">
-      <img src="img/Logopng.png" alt="Epígrafe" class="h-20 w-auto brightness-0 invert transition-all">
+      <img src="img/Logopng.png" alt="Epígrafe" class="h-16 md:h-20 w-auto brightness-0 invert transition-all">
     </a>
+
+    <!-- Botón Hamburguesa para Móvil -->
+    <div class="md:hidden flex items-center">
+      <button (click)="toggleMenu()" class="text-crema-fondo focus:outline-none p-2">
+        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path *ngIf="!menuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          <path *ngIf="menuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Menú de Escritorio -->
     <ul class="hidden md:flex space-x-10 items-end text-sm font-medium">
 
       <li>
@@ -36,15 +48,13 @@
         </a>
         <div class="absolute left-0 top-full pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
           <div class="w-56 bg-white rounded-lg shadow-xl border border-gray-100 overflow-hidden py-2 text-gray-700">
-            <a href="/libreria/novedades" class="block px-5 py-3 hover:bg-crema-fondo hover:text-verde-epigrafe transition-colors">Novedades</a>
-            <a href="/libreria/clasicos" class="block px-5 py-3 hover:bg-crema-fondo hover:text-verde-epigrafe transition-colors">Clásicos Literarios</a>
-            <a href="/libreria/ediciones-merch" class="block px-5 py-3 hover:bg-crema-fondo hover:text-verde-epigrafe transition-colors">Ediciones Especiales y Merch</a>
-            <a href="/libreria/catalogo" class="block px-5 py-3 hover:bg-crema-fondo hover:text-verde-epigrafe transition-colors">Catálogo Completo</a>
+            <a routerLink="/libreria/novedades" class="block px-5 py-3 hover:bg-crema-fondo hover:text-verde-epigrafe transition-colors">Novedades</a>
+            <a routerLink="/libreria/clasicos" class="block px-5 py-3 hover:bg-crema-fondo hover:text-verde-epigrafe transition-colors">Clásicos Literarios</a>
+            <a routerLink="/libreria/ediciones-merch" class="block px-5 py-3 hover:bg-crema-fondo hover:text-verde-epigrafe transition-colors">Ediciones Especiales y Merch</a>
+            <a routerLink="/libreria/catalogo" class="block px-5 py-3 hover:bg-crema-fondo hover:text-verde-epigrafe transition-colors">Catálogo Completo</a>
           </div>
         </div>
       </li>
-
-     
 
       <li class="relative group">
         <a class="flex items-center gap-1 hover:text-white transition-colors pb-1 border-b-2 border-transparent hover:border-white cursor-pointer">
@@ -55,9 +65,9 @@
         </a>
         <div class="absolute left-0 top-full pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
           <div class="w-56 bg-white rounded-lg shadow-xl border border-gray-100 overflow-hidden py-2 text-gray-700">
-            <a href="/clublectura" class="block px-5 py-3 hover:bg-crema-fondo hover:text-verde-epigrafe transition-colors">Club de Lectura</a>
-            <a href="/eventos" class="block px-5 py-3 hover:bg-crema-fondo hover:text-verde-epigrafe transition-colors">Eventos Culturales</a>
-            <a href="/beneficios" class="block px-5 py-3 hover:bg-crema-fondo hover:text-verde-epigrafe transition-colors">Beneficios Epígrafes</a>
+            <a routerLink="/clublectura" class="block px-5 py-3 hover:bg-crema-fondo hover:text-verde-epigrafe transition-colors">Club de Lectura</a>
+            <a routerLink="/eventos" class="block px-5 py-3 hover:bg-crema-fondo hover:text-verde-epigrafe transition-colors">Eventos Culturales</a>
+            <a routerLink="/beneficios" class="block px-5 py-3 hover:bg-crema-fondo hover:text-verde-epigrafe transition-colors">Beneficios Epígrafes</a>
           </div>
         </div>
       </li>
@@ -71,15 +81,15 @@
         </a>
         <div class="absolute right-0 top-full pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
           <div class="w-56 bg-white rounded-lg shadow-xl border border-gray-100 overflow-hidden py-2 text-gray-700">
-            <a href="/contacto/ubicacion" class="block px-5 py-3 hover:bg-crema-fondo hover:text-verde-epigrafe transition-colors">Ubicación y Horarios</a>
-            <a href="/contacto/faq" class="block px-5 py-3 hover:bg-crema-fondo hover:text-verde-epigrafe transition-colors">Preguntas Frecuentes</a>
-            <a href="/contacto/facturacion" class="block px-5 py-3 hover:bg-crema-fondo hover:text-verde-epigrafe transition-colors">Facturación</a>
+            <a routerLink="/contacto/ubicacion" class="block px-5 py-3 hover:bg-crema-fondo hover:text-verde-epigrafe transition-colors">Ubicación y Horarios</a>
+            <a routerLink="/contacto/faq" class="block px-5 py-3 hover:bg-crema-fondo hover:text-verde-epigrafe transition-colors">Preguntas Frecuentes</a>
+            <a routerLink="/contacto/facturacion" class="block px-5 py-3 hover:bg-crema-fondo hover:text-verde-epigrafe transition-colors">Facturación</a>
             <a routerLink="/contacto/mensaje" class="block px-5 py-3 hover:bg-crema-fondo hover:text-verde-epigrafe transition-colors">Escríbenos</a>
           </div>
         </div>
       </li>
 
-       <li class="relative group">
+      <li class="relative group">
         @if (authService.user$ | async; as user) {
           <a class="flex items-center gap-2.5 hover:text-white transition-colors pb-1 border-b-2 border-transparent hover:border-white cursor-pointer">
             <span class="flex items-center justify-center h-8 w-8 rounded-full bg-white/15 text-white text-sm font-semibold uppercase ring-1 ring-white/30">
@@ -127,7 +137,36 @@
           </div>
         }
       </li>
-    </ul>
 
+      <li>
+        <a routerLink="/pickup/resumen"
+          class="relative flex items-center gap-1 hover:text-white transition-colors pb-1 cursor-pointer">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+          </svg>
+          <span class="hidden lg:inline text-sm">Pickup</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Menú Desplegable para Móvil -->
+  <div *ngIf="menuOpen" class="md:hidden bg-amber-900 text-crema-fondo border-t border-amber-800 px-6 py-4 space-y-3">
+    <a routerLink="/" (click)="closeMenu()" class="block py-2 font-medium hover:text-white transition-colors">Inicio</a>
+    <a routerLink="/menu/bebidas" (click)="closeMenu()" class="block py-2 font-medium hover:text-white transition-colors">Menú de Bebidas y Postres</a>
+    <a routerLink="/libreria/novedades" (click)="closeMenu()" class="block py-2 font-medium hover:text-white transition-colors">Librería (Novedades)</a>
+    <a routerLink="/clublectura" (click)="closeMenu()" class="block py-2 font-medium hover:text-white transition-colors">Club de Lectura</a>
+    <a routerLink="/contacto/mensaje" (click)="closeMenu()" class="block py-2 font-medium hover:text-white transition-colors">Contacto / Escríbenos</a>
+    
+    <div class="pt-3 border-t border-amber-800">
+      @if (authService.user$ | async; as user) {
+        <p class="text-sm font-semibold mb-2">Hola, {{ user.nombre }}</p>
+        <button (click)="cerrarSesion()" class="w-full text-left py-2 text-red-200 font-medium">Cerrar sesión</button>
+      } @else {
+        <a routerLink="/login" (click)="closeMenu()" class="block py-2 font-bold text-white">Iniciar Sesión</a>
+        <a routerLink="/registro" (click)="closeMenu()" class="block py-2 font-medium text-amber-200">¡Regístrate!</a>
+      }
+    </div>
   </div>
 </nav>

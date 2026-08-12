@@ -1,6 +1,15 @@
 <div class="max-w-6xl mx-auto px-8 py-12">
   <h1 class="text-4xl font-serif font-bold text-texto-principal mb-8">Nuestra Librería</h1>
 
+  <!-- Barra de Búsqueda General -->
+  <div class="mb-8">
+    <input 
+      type="text" 
+      [(ngModel)]="terminoBusqueda" 
+      placeholder="Buscar libro por título o autor..." 
+      class="w-full md:w-96 px-4 py-3 rounded-xl border border-gray-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-verde-epigrafe bg-white">
+  </div>
+
   <div class="flex flex-col md:flex-row gap-10">
 
     <!-- Sidebar de Filtros -->
@@ -8,36 +17,58 @@
       <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
         <h3 class="font-bold text-verde-epigrafe mb-4 uppercase tracking-wider text-sm">Categorías</h3>
         <ul class="space-y-2 text-gray-600">
-          <li><button class="hover:text-verde-epigrafe transition-colors">Todos los libros</button></li>
-          <li><button class="hover:text-verde-epigrafe transition-colors">Clásicos</button></li>
-          <li><button class="hover:text-verde-epigrafe transition-colors">Romance</button></li>
-          <li><button class="hover:text-verde-epigrafe transition-colors">Misterio</button></li>
+          <li>
+            <button (click)="filtroCategoria = 'todos'" [class.font-bold]="filtroCategoria === 'todos'" class="hover:text-verde-epigrafe transition-colors w-full text-left">
+              Todos los libros
+            </button>
+          </li>
+          <li>
+            <button (click)="filtroCategoria = 'Clásicos'" [class.font-bold]="filtroCategoria === 'Clásicos'" class="hover:text-verde-epigrafe transition-colors w-full text-left">
+              Clásicos
+            </button>
+          </li>
+          <li>
+            <button (click)="filtroCategoria = 'Romance'" [class.font-bold]="filtroCategoria === 'Romance'" class="hover:text-verde-epigrafe transition-colors w-full text-left">
+              Romance
+            </button>
+          </li>
+          <li>
+            <button (click)="filtroCategoria = 'Misterio'" [class.font-bold]="filtroCategoria === 'Misterio'" class="hover:text-verde-epigrafe transition-colors w-full text-left">
+              Misterio
+            </button>
+          </li>
         </ul>
       </div>
     </aside>
 
     <!-- Catálogo -->
     <main class="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-      @for (libro of catalogo; track libro.titulo) {
-        <div class="group bg-white rounded-xl shadow-sm border border-green-50 p-4 hover:shadow-lg transition-all duration-300 ring-transparent ring-2"
+      @for (libro of librosFiltrados; track libro.titulo) {
+        <div class="group bg-white rounded-xl shadow-sm border border-green-50 p-4 hover:shadow-lg transition-all duration-300 ring-transparent ring-2 flex flex-col justify-between"
              (mouseenter)="libro.destacado = true"
              (mouseleave)="libro.destacado = false"
              [class.ring-verde-epigrafe]="libro.destacado">
 
-          <div class="relative overflow-hidden rounded-lg mb-4">
-            <img [src]="libro.imagen" [alt]="libro.titulo" class="w-full h-64 object-cover transform group-hover:scale-105 transition-transform duration-500">
+          <div>
+            <div class="relative overflow-hidden rounded-lg mb-4">
+              <img [src]="libro.imagen" [alt]="libro.titulo" class="w-full h-64 object-cover transform group-hover:scale-105 transition-transform duration-500">
+            </div>
+
+            <span class="text-[10px] uppercase font-bold text-gray-400">{{ libro.categoria }}</span>
+            <h3 class="font-serif font-bold text-texto-principal text-lg mb-1">{{ libro.titulo }}</h3>
+            <p class="text-sm text-gray-600 mb-4">{{ libro.autor }}</p>
           </div>
 
-          <span class="text-[10px] uppercase font-bold text-gray-400">{{ libro.categoria }}</span>
-          <h3 class="font-serif font-bold text-texto-principal text-lg mb-1">{{ libro.titulo }}</h3>
-          <p class="text-sm text-gray-600 mb-4">{{ libro.autor }}</p>
-
-          <div class="flex justify-between items-center">
+          <div class="flex justify-between items-center pt-2 border-t border-gray-100">
             <span class="font-bold text-verde-epigrafe">${{ libro.precio }}</span>
             <button class="bg-crema-fondo text-verde-epigrafe px-4 py-2 rounded-lg text-sm font-bold hover:bg-verde-epigrafe hover:text-white transition-colors">
-              Comprar
+              Apartar (Pickup)
             </button>
           </div>
+        </div>
+      } @empty {
+        <div class="col-span-full text-center py-12 text-gray-500">
+          No se encontraron libros que coincidan con tu búsqueda.
         </div>
       }
     </main>

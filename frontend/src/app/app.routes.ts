@@ -20,6 +20,7 @@ import { EditorLibreria } from './admin/editorlibreria/editorlibreria.component'
 import { IniciarSesion } from './pages/iniciar-sesion/iniciar-sesion.component';
 import { Registro } from './pages/registro/registro.component';
 import { authGuard } from './auth-guard';
+import { ResumenPickup } from './pages/resumenpickup/resumenpickup.component';
 
 
 export const routes: Routes = [
@@ -31,6 +32,7 @@ export const routes: Routes = [
   { path: 'libreria/clasicos', component: Clasicos },
   { path: 'libreria/ediciones-merch', component: EdicionesMerch },
   { path: 'libreria/catalogo', component: Catalogo },
+  { path: 'pickup/resumen', component: ResumenPickup },
   { path: 'clublectura', component: Clublectura },
   { path: 'eventos', component: Eventos },
   { path: 'beneficios', component: Beneficios },

@@ -12,11 +12,20 @@ import { ToastService } from '../../services/toast.service';
   styleUrls: ['./navbar.component.css'],
 })
 export class Navbar {
+  menuOpen = false;
 
   constructor(public authService: AuthService, private router: Router, private toast: ToastService) {}
 
   isLoggedIn() {
     return !!localStorage.getItem('token');
+  }
+
+  toggleMenu() {
+    this.menuOpen = !this.menuOpen;
+  }
+
+  closeMenu() {
+    this.menuOpen = false;
   }
 
   cerrarSesion() {
@@ -25,5 +34,6 @@ export class Navbar {
     this.authService.updateUser(null);
     this.toast.info('Cerraste sesión correctamente.');
     this.router.navigate(['/']); // Redirige al inicio
+    this.closeMenu();
   }
 }
