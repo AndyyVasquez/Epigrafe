@@ -54,9 +54,21 @@ export class EditorLibreria implements OnInit {
 
   get productosFiltrados() {
     return this.productos.filter(p => {
-      const coincideCat = p.categoria === this.categoriaActiva;
+      // Compara que la categoría coincida (asegurando minúsculas)
+      const catProducto = (p.categoria || '').trim().toLowerCase();
+      const catActiva = (this.categoriaActiva || '').trim().toLowerCase();
+      const coincideCat = catProducto === catActiva;
+
+      // Si no hay texto en el buscador, por defecto pasan todos los de la categoría
+      if (!this.busqueda || this.busqueda.trim() === '') {
+        return coincideCat;
+      }
+
+      // Si hay texto, filtramos por título o nombre
       const texto = (p.titulo || p.nombre || '').toLowerCase();
-      return coincideCat && texto.includes(this.busqueda.toLowerCase());
+      const coincideBusqueda = texto.includes(this.busqueda.toLowerCase());
+
+      return coincideCat && coincideBusqueda;
     });
   }
 
