@@ -1,6 +1,5 @@
 <div class="max-w-6xl mx-auto px-8 py-12">
 
-  <!-- Encabezado de la Página -->
   <div class="text-center mb-12">
     <h1 class="text-4xl md:text-5xl font-serif font-bold text-texto-principal mb-4">
       Nuestro Menú
@@ -10,7 +9,6 @@
     </p>
   </div>
 
-  <!-- Sub-Navegación / Pestañas -->
   <div class="flex justify-center border-b border-gray-200 mb-12">
     <div class="flex space-x-8 text-base font-medium">
       <a routerLink="/menu/bebidas"
@@ -18,7 +16,6 @@
          class="pb-4 border-b-2 border-transparent text-gray-400 hover:text-verde-epigrafe transition-colors px-2">
         Capítulo I. Bebidas
       </a>
-      <!-- Pestaña Postres -->
       <a routerLink="/menu/postres"
          routerLinkActive="border-verde-epigrafe text-verde-epigrafe"
          class="pb-4 border-b-2 border-transparent text-gray-400 hover:text-verde-epigrafe transition-colors px-2">
@@ -32,17 +29,19 @@
     </div>
   </div>
 
-  <!-- Cuadrícula de Productos -->
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
     @for (postre of postres; track postre.nombre) {
-      <div class="bg-crema-fondo rounded-2xl p-6 flex flex-col justify-between hover:shadow-md transition-shadow">
+      <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col justify-between hover:shadow-md transition-shadow">
         <div>
-          <!-- Badge de Tipo -->
+          <!-- Imagen del postre -->
+          <div class="relative overflow-hidden rounded-xl mb-4 h-48 bg-gray-50 flex items-center justify-center">
+            <img [src]="postre.imagen || '/img/default.jpg'" [alt]="postre.nombre" class="w-full h-full object-cover">
+          </div>
+
           <span class="inline-block text-xs font-bold uppercase tracking-wider text-white bg-verde-epigrafe px-2.5 py-1 rounded-full mb-4">
-            {{ postre.tipo }}
+            {{ postre.tipo_etiqueta || postre.tipo }}
           </span>
 
-          <!-- Nombre y Precio -->
           <div class="flex justify-between items-baseline mb-2">
             <h3 class="text-xl font-serif font-bold text-texto-principal">
               {{ postre.nombre }}
@@ -52,16 +51,16 @@
             </span>
           </div>
 
-          <!-- Descripción -->
           <p class="text-sm text-gray-600 leading-relaxed font-sans mb-6">
             {{ postre.descripcion }}
           </p>
         </div>
 
-         @if (postre.stock > 0) {
+        <!-- Botón único con control de stock -->
+        @if (postre.stock > 0) {
           <button (click)="agregarAlCarrito(postre)"
             class="w-full bg-verde-epigrafe text-crema-fondo py-2.5 rounded-xl font-bold text-sm hover:bg-opacity-90 transition-colors">
-            Agregar a la orden (Stock: {{ postre.stock }})
+            Agregar a la orden 
           </button>
         } @else {
           <button disabled
@@ -69,11 +68,6 @@
             Agotado temporalmente
           </button>
         }
-
-         <button (click)="agregarAlCarrito(postre)"
-          class="w-full bg-verde-epigrafe text-crema-fondo py-2.5 rounded-xl font-bold text-sm hover:bg-opacity-90 transition-colors">
-          Agregar a la orden
-        </button>
       </div>
     }
   </div>

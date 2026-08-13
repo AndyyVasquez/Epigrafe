@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { Carrito } from '../../services/carrito.service';
@@ -11,23 +11,22 @@ import { HttpClient } from '@angular/common/http';
   imports: [CommonModule, RouterLink, RouterLinkActive],
   templateUrl: './menu-promociones.component.html'
 })
-export class MenuPromociones {
+export class MenuPromociones implements OnInit {
   promos: any[] = [];
-   constructor(
+
+  constructor(
     private http: HttpClient,
     private carrito: Carrito,
-    private toast: ToastService
+    private toast: ToastService,
+    private cdr: ChangeDetectorRef
   ) {}
 
-  agregarAlCarrito(item: any) {
-    this.carrito.agregarAlCarrito(item);
-    this.toast.info(`¡"${item.titulo || item.nombre}" agregado al pickup!`);
-  }
   ngOnInit() {
     this.http.get<any[]>('https://epigrafe.onrender.com/api/catalogo?categoria=promocion')
       .subscribe({
         next: (data) => {
-          this.promos = data;
+          this.promos = data || [];
+          this.cdr.detectChanges();
         },
         error: (err) => {
           console.error('Error al cargar promociones:', err);
@@ -35,5 +34,13 @@ export class MenuPromociones {
         }
       });
   }
-  
+
+  agregarAlCarrito(item: any) {
+    if (item.stock <= 0) {
+      this.toast.info('Este producto se encuentra agotado.');
+      return;
+    }
+    this.carrito.agregarAlCarrito(item);
+    this.toast.info(`¡"${item.titulo || item.nombre}" agregado al pickup!`);
+  }
 }

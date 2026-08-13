@@ -43,36 +43,27 @@
 
     <!-- Catálogo -->
     <main class="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-      @for (libro of librosFiltrados; track libro.titulo) {
-        <div class="group bg-white rounded-xl shadow-sm border border-green-50 p-4 hover:shadow-lg transition-all duration-300 ring-transparent ring-2 flex flex-col justify-between"
-             (mouseenter)="libro.destacado = true"
-             (mouseleave)="libro.destacado = false"
-             [class.ring-verde-epigrafe]="libro.destacado">
-
-          <div>
-            <div class="relative overflow-hidden rounded-lg mb-4">
-              <img [src]="libro.imagen" [alt]="libro.titulo" class="w-full h-64 object-cover transform group-hover:scale-105 transition-transform duration-500">
-            </div>
-
-            <span class="text-[10px] uppercase font-bold text-gray-400">{{ libro.categoria }}</span>
-            <h3 class="font-serif font-bold text-texto-principal text-lg mb-1">{{ libro.titulo }}</h3>
-            <p class="text-sm text-gray-600 mb-4">{{ libro.autor }}</p>
-          </div>
-
-          <div class="flex justify-between items-center pt-2 border-t border-gray-100">
-            <span class="font-bold text-verde-epigrafe">${{ libro.precio }}</span>
-            <button click="comprarParaPickup(libro)"
-            class="bg-crema-fondo text-verde-epigrafe px-4 py-2 rounded-lg text-sm font-bold hover:bg-verde-epigrafe hover:text-white transition-colors">
-              Apartar (Pickup)
-            </button>
-            
-          </div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+  @for (libro of librosFiltrados; track libro.id) {
+    <div class="bg-white p-5 border rounded-2xl shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+      <div>
+        <div class="relative overflow-hidden rounded-xl mb-4 h-64 bg-gray-50 flex items-center justify-center">
+          <img [src]="libro.imagen || '/img/default.jpg'" [alt]="libro.titulo" class="w-full h-full object-cover">
         </div>
-      } @empty {
-        <div class="col-span-full text-center py-12 text-gray-500">
-          No se encontraron libros que coincidan con tu búsqueda.
-        </div>
-      }
+        <span class="text-[10px] uppercase font-bold px-2 py-0.5 bg-crema-fondo text-verde-epigrafe rounded-full">{{ libro.tipo_etiqueta || libro.categoria }}</span>
+        <h3 class="font-serif font-bold text-lg mt-2 text-stone-800">{{ libro.titulo }}</h3>
+        <p class="text-xs text-gray-500 mb-2">Por: {{ libro.autor }}</p>
+        <p class="text-sm font-bold text-verde-epigrafe mb-4">${{ libro.precio }} MXN</p>
+      </div>
+
+      <button (click)="comprarParaPickup(libro)" class="w-full bg-verde-epigrafe text-crema-fondo py-2.5 rounded-xl font-bold text-sm hover:opacity-95 transition-colors">
+        Apartar para Pickup
+      </button>
+    </div>
+  } @empty {
+    <p class="text-gray-500 italic col-span-full text-center py-12">No se encontraron libros que coincidan con tu búsqueda.</p>
+  }
+</div>
     </main>
   </div>
 </div>

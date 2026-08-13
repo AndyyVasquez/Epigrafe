@@ -33,8 +33,12 @@
     @for (bebida of bebidas; track bebida.nombre) {
       <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col justify-between hover:shadow-md transition-shadow">
         <div>
+          <div class="relative overflow-hidden rounded-xl mb-4 h-48 bg-gray-50 flex items-center justify-center">
+            <img [src]="bebida.imagen || '/img/default.jpg'" [alt]="bebida.nombre" class="w-full h-full object-cover">
+          </div>
+
           <span class="inline-block text-xs font-bold uppercase tracking-wider text-verde-epigrafe bg-crema-fondo px-2.5 py-1 rounded-full mb-4">
-            {{ bebida.tipo }}
+            {{ bebida.tipo_etiqueta || bebida.tipo }}
           </span>
 
           <div class="flex justify-between items-baseline mb-2">
@@ -54,7 +58,7 @@
         @if (bebida.stock > 0) {
           <button (click)="agregarAlCarrito(bebida)"
             class="w-full bg-verde-epigrafe text-crema-fondo py-2.5 rounded-xl font-bold text-sm hover:bg-opacity-90 transition-colors">
-            Agregar a la orden (Stock: {{ bebida.stock }})
+            Agregar a la orden
           </button>
         } @else {
           <button disabled
@@ -62,11 +66,6 @@
             Agotado temporalmente
           </button>
         }
-
-        <button (click)="agregarAlCarrito(bebida)"
-          class="w-full bg-verde-epigrafe text-crema-fondo py-2.5 rounded-xl font-bold text-sm hover:bg-opacity-90 transition-colors">
-          Agregar a la orden
-        </button>
       </div>
     }
   </div>

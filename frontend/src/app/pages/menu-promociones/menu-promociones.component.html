@@ -1,6 +1,5 @@
 <div class="max-w-6xl mx-auto px-8 py-12">
 
-  <!-- Encabezado de la Página -->
   <div class="text-center mb-12">
     <h1 class="text-4xl md:text-5xl font-serif font-bold text-texto-principal mb-4">
       Promociones del Día
@@ -10,67 +9,59 @@
     </p>
   </div>
 
-  <!-- Sub-Navegación / Pestañas -->
   <div class="flex justify-center border-b border-gray-200 mb-12">
     <div class="flex space-x-8 text-base font-medium">
-      <!-- Pestaña Bebidas (Inactiva) -->
       <a routerLink="/menu/bebidas"
          routerLinkActive="border-verde-epigrafe text-verde-epigrafe"
          class="pb-4 border-b-2 border-transparent text-gray-400 hover:text-verde-epigrafe transition-colors px-2">
          Capítulo I. Bebidas
       </a>
-      <!-- Pestaña Postres (Inactiva) -->
       <a routerLink="/menu/postres"
          routerLinkActive="border-verde-epigrafe text-verde-epigrafe"
          class="pb-4 border-b-2 border-transparent text-gray-400 hover:text-verde-epigrafe transition-colors px-2">
         Capítulo II. Panadería y Postres
       </a>
-      <!-- Pestaña Promociones (Activa) -->
       <a routerLink="/menu/promociones"
          routerLinkActive="border-verde-epigrafe text-verde-epigrafe"
-         class="pb-4 border-b-2 border-transparent hover:text-verde-epigrafe transition-colors px-2">
+         class="pb-4 border-b-2 border-transparent text-gray-400 hover:text-verde-epigrafe transition-colors px-2">
         Capítulo III. Promociones
       </a>
     </div>
   </div>
 
-  <!-- Cuadrícula de Promociones (Grid Dinámico) -->
   <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
     @for (promo of promos; track promo.nombre) {
       <div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 flex flex-col justify-between hover:shadow-lg transition-shadow relative overflow-hidden">
-
-        <!-- Detalle visual: Una franja verde sutil en el borde superior -->
         <div class="absolute top-0 left-0 w-full h-1 bg-verde-epigrafe"></div>
 
         <div>
-          <!-- Badge Promocional -->
-          <span class="inline-block text-xs font-bold uppercase tracking-wider text-white bg-verde-epigrafe px-3 py-1.5 rounded-md mb-4 shadow-sm">
-            {{ promo.etiqueta }}
-          </span>
-
-          <!-- Nombre y Precio -->
-          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-baseline mb-3 gap-2">
-            <h3 class="text-2xl font-serif font-bold text-texto-principal">
-              {{ promo.nombre }}
-            </h3>
-
-            @if (promo.precioEspecial) {
-              <span class="text-xl font-bold text-verde-epigrafe whitespace-nowrap">
-                ${{ promo.precioEspecial }}
-              </span>
-            }
+          <div class="relative overflow-hidden rounded-xl mb-4 h-48 bg-gray-50 flex items-center justify-center">
+            <img [src]="promo.imagen || '/img/default.jpg'" [alt]="promo.nombre" class="w-full h-full object-cover">
           </div>
 
-          <!-- Descripción -->
+          <span class="inline-block text-xs font-bold uppercase tracking-wider text-white bg-verde-epigrafe px-3 py-1.5 rounded-md mb-4 shadow-sm">
+            {{ promo.tipo_etiqueta || promo.etiqueta }}
+          </span>
+
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-baseline mb-3 gap-2">
+            <h3 class="text-2xl font-serif font-bold text-texto-principal">
+              {{ promo.titulo || promo.nombre }}
+            </h3>
+
+            <span class="text-xl font-bold text-verde-epigrafe whitespace-nowrap">
+              ${{ promo.precio }}
+            </span>
+          </div>
+
           <p class="text-base text-gray-600 leading-relaxed font-sans mb-8">
             {{ promo.descripcion }}
           </p>
         </div>
 
-         @if (promo.stock > 0) {
+        @if (promo.stock > 0) {
           <button (click)="agregarAlCarrito(promo)"
             class="w-full bg-verde-epigrafe text-crema-fondo py-2.5 rounded-xl font-bold text-sm hover:bg-opacity-90 transition-colors">
-            Agregar a la orden (Stock: {{ promo.stock }})
+            Agregar a la orden 
           </button>
         } @else {
           <button disabled
@@ -78,11 +69,6 @@
             Agotado temporalmente
           </button>
         }
-
-          <button (click)="agregarAlCarrito(promo)"
-          class="w-full bg-verde-epigrafe text-crema-fondo py-2.5 rounded-xl font-bold text-sm hover:bg-opacity-90 transition-colors">
-          Agregar a la orden
-        </button>
       </div>
     }
   </div>

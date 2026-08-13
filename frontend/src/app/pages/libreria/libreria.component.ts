@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -22,7 +22,8 @@ export class Libreria implements OnInit {
   constructor(
     private http: HttpClient,
     private carritoService: Carrito, 
-    private toast: ToastService
+    private toast: ToastService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -32,7 +33,8 @@ export class Libreria implements OnInit {
   cargarLibros() {
     this.http.get<any[]>(this.apiUrl).subscribe({
       next: (data) => {
-        this.libros = data.map(libro => ({ ...libro, destacado: false }));
+        this.libros = data || [];
+        this.cdr.detectChanges(); // Fuerza la carga visual inmediata
       },
       error: (err) => {
         console.error('Error al cargar libros:', err);
@@ -45,11 +47,15 @@ export class Libreria implements OnInit {
     return this.libros.filter(libro => {
       const titulo = libro.titulo || libro.nombre || '';
       const autor = libro.autor || '';
-      const categoria = libro.categoria || '';
+      const categoria = (libro.categoria || '').toLowerCase();
+      const etiqueta = (libro.tipo_etiqueta || '').toLowerCase();
+      const filtro = this.filtroCategoria.toLowerCase();
 
       const coincideTexto = titulo.toLowerCase().includes(this.terminoBusqueda.toLowerCase()) ||
                             autor.toLowerCase().includes(this.terminoBusqueda.toLowerCase());
-      const coincideCat = this.filtroCategoria === 'todos' || categoria.toLowerCase() === this.filtroCategoria.toLowerCase();
+      
+      const coincideCat = filtro === 'todos' || categoria.includes(filtro) || etiqueta.includes(filtro);
+      
       return coincideTexto && coincideCat;
     });
   }
