@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { ToastService } from '../../services/toast.service';
@@ -12,12 +12,13 @@ import { Carrito } from '../../services/carrito.service';
 })
 export class EdicionesMerch implements OnInit {
   items: any[] = [];
-  private apiUrl = 'https://epigrafe.onrender.com/api/catalogo'; // Puedes filtrar o traer todo y filtrar en frontend
+  private apiUrl = 'https://epigrafe.onrender.com/api/catalogo';
 
   constructor(
     private http: HttpClient,
     private carrito: Carrito,
-    private toast: ToastService
+    private toast: ToastService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -27,10 +28,12 @@ export class EdicionesMerch implements OnInit {
   cargarMerch() {
     this.http.get<any[]>(this.apiUrl).subscribe({
       next: (data) => {
-        // Filtramos las categorías de merch o ediciones especiales creadas desde el admin
-        this.items = data.filter(item => 
-          item.categoria === 'merch' || item.categoria === 'edicion' || item.categoria === 'Edición Especial'
-        );
+        // Traemos todo lo que sea merch o edición especial de forma flexible
+        this.items = (data || []).filter(item => {
+          const cat = (item.categoria || '').toLowerCase();
+          return cat.includes('merch') || cat.includes('edicion') || cat.includes('especial');
+        });
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Error al cargar merch:', err);

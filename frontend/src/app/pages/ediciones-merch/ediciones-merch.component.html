@@ -5,16 +5,16 @@
   </div>
 
   <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-    @for (item of items; track item.nombre) {
+    @for (item of items; track item.id) {
       <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 hover:shadow-lg transition-all duration-300 flex flex-col justify-between">
         <div>
-          <div class="overflow-hidden rounded-xl mb-4">
-            <img [src]="item.imagen" [alt]="item.nombre" class="w-full h-48 object-cover transform hover:scale-110 transition-transform duration-500">
+          <div class="overflow-hidden rounded-xl mb-4 h-48 bg-gray-50 flex items-center justify-center">
+            <img [src]="item.imagen || '/img/default.jpg'" [alt]="item.titulo || item.nombre" class="w-full h-full object-cover transform hover:scale-110 transition-transform duration-500">
           </div>
           <span class="text-[10px] font-bold text-verde-epigrafe bg-crema-fondo px-2 py-0.5 rounded-full uppercase tracking-wider">
-            {{ item.categoria }}
+            {{ item.tipo_etiqueta || item.categoria }}
           </span>
-          <h3 class="font-bold text-texto-principal mt-2 mb-1">{{ item.nombre }}</h3>
+          <h3 class="font-bold text-texto-principal mt-2 mb-1">{{ item.titulo || item.nombre }}</h3>
         </div>
 
         <div class="flex justify-between items-center mt-4">
@@ -25,6 +25,8 @@
           </button>
         </div>
       </div>
+    } @empty {
+      <p class="text-gray-500 italic col-span-full text-center py-12">No hay productos de merch o ediciones especiales disponibles.</p>
     }
   </div>
 </div>

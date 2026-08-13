@@ -41,29 +41,29 @@
       </div>
     </aside>
 
-    <!-- Catálogo -->
-    <main class="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-  @for (libro of librosFiltrados; track libro.id) {
-    <div class="bg-white p-5 border rounded-2xl shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
-      <div>
-        <div class="relative overflow-hidden rounded-xl mb-4 h-64 bg-gray-50 flex items-center justify-center">
-          <img [src]="libro.imagen || '/img/default.jpg'" [alt]="libro.titulo" class="w-full h-full object-cover">
-        </div>
-        <span class="text-[10px] uppercase font-bold px-2 py-0.5 bg-crema-fondo text-verde-epigrafe rounded-full">{{ libro.tipo_etiqueta || libro.categoria }}</span>
-        <h3 class="font-serif font-bold text-lg mt-2 text-stone-800">{{ libro.titulo }}</h3>
-        <p class="text-xs text-gray-500 mb-2">Por: {{ libro.autor }}</p>
-        <p class="text-sm font-bold text-verde-epigrafe mb-4">${{ libro.precio }} MXN</p>
-      </div>
+    <!-- Catálogo Dinámico -->
+    <main class="flex-1">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        @for (libro of librosFiltrados; track libro.id) {
+          <div class="bg-white p-5 border rounded-2xl shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+            <div>
+              <div class="relative overflow-hidden rounded-xl mb-4 h-64 bg-gray-50 flex items-center justify-center">
+                <img [src]="libro.imagen || '/img/default.jpg'" [alt]="libro.titulo" class="w-full h-full object-cover">
+              </div>
+              <span class="text-[10px] uppercase font-bold px-2 py-0.5 bg-crema-fondo text-verde-epigrafe rounded-full">{{ libro.tipo_etiqueta || libro.categoria }}</span>
+              <h3 class="font-serif font-bold text-lg mt-2 text-stone-800">{{ libro.titulo }}</h3>
+              <p class="text-xs text-gray-500 mb-2">Por: {{ libro.autor }}</p>
+              <p class="text-sm font-bold text-verde-epigrafe mb-4">${{ libro.precio }} MXN</p>
+            </div>
 
-      <button (click)="comprarParaPickup(libro)" class="w-full bg-verde-epigrafe text-crema-fondo py-2.5 rounded-xl font-bold text-sm hover:opacity-95 transition-colors">
-        Apartar para Pickup
-      </button>
-    </div>
-  } @empty {
-    <p class="text-gray-500 italic col-span-full text-center py-12">No se encontraron libros que coincidan con tu búsqueda.</p>
-  }
-</div>
+            <button (click)="comprarParaPickup(libro)" class="w-full bg-verde-epigrafe text-crema-fondo py-2.5 rounded-xl font-bold text-sm hover:opacity-95 transition-colors">
+              Apartar para Pickup
+            </button>
+          </div>
+        } @empty {
+          <p class="text-gray-500 italic col-span-full text-center py-12">No se encontraron libros que coincidan con tu búsqueda.</p>
+        }
+      </div>
     </main>
   </div>
 </div>

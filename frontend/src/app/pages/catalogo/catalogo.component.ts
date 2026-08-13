@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-catalogo',
@@ -8,25 +9,33 @@ import { FormsModule } from '@angular/forms';
   imports: [CommonModule, FormsModule],
   templateUrl: './catalogo.component.html'
 })
-export class Catalogo {
-  // Datos base
-  libros = [
-    { titulo: 'El Psicoanalista', autor: 'John Katzenbach', categoria: 'Misterio', precio: 280, imagen: '/img/libro-psico.png' },
-    { titulo: 'Orgullo y Prejuicio', autor: 'Jane Austen', categoria: 'Clásicos', precio: 220, imagen: '/img/orgulloprejuicio.png' },
-    { titulo: 'Hábitos Atómicos', autor: 'James Clear', categoria: 'Productividad', precio: 350, imagen: '/img/libro-habitos.png' }
-  ];
-
+export class Catalogo implements OnInit {
+  libros: any[] = [];
   filtroSeleccionado = 'Todos';
   terminoBusqueda = '';
 
-  // Esta función es el "corazón" del filtrado reactivo
+  private apiUrl = 'https://epigrafe.onrender.com/api/catalogo?categoria=libro';
+
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
+
+  ngOnInit() {
+    this.http.get<any[]>(this.apiUrl).subscribe({
+      next: (data) => {
+        this.libros = data || [];
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Error al cargar catálogo:', err)
+    });
+  }
+
   get librosFiltrados() {
     return this.libros.filter(libro => {
-      // Filtra por categoría
-      const cumpleCategoria = this.filtroSeleccionado === 'Todos' || libro.categoria === this.filtroSeleccionado;
+      const categoria = (libro.tipo_etiqueta || libro.categoria || '').toLowerCase();
+      const filtro = this.filtroSeleccionado.toLowerCase();
+      const cumpleCategoria = this.filtroSeleccionado === 'Todos' || categoria.includes(filtro);
 
-      // Filtra por texto (búsqueda tipo Bamboo)
-      const cumpleBusqueda = libro.titulo.toLowerCase().includes(this.terminoBusqueda.toLowerCase());
+      const titulo = (libro.titulo || libro.nombre || '').toLowerCase();
+      const cumpleBusqueda = titulo.includes(this.terminoBusqueda.toLowerCase());
 
       return cumpleCategoria && cumpleBusqueda;
     });
