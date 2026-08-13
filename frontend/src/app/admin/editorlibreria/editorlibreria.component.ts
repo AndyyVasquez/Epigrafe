@@ -148,15 +148,15 @@ cargarCatalogo() {
     };
   }
 
-  eliminarProducto(id: number) {
-    if (confirm('¿Estás segura de eliminar este producto?')) {
-      this.http.delete(`${this.apiUrl}/${id}`).subscribe({
-        next: () => {
-          this.toast.info('Producto eliminado.');
-          this.cargarCatalogo();
-        },
-        error: () => this.toast.info('No se pudo eliminar.')
-      });
-    }
+eliminarProducto(id: number) {
+    this.http.delete(`${this.apiUrl}/${id}`).subscribe({
+      next: () => {
+        this.toast.info('Producto eliminado correctamente.');
+        this.cargarCatalogo();
+      },
+      error: () => {
+        this.toast.info('No se pudo eliminar el producto.');
+      }
+    });
   }
 }

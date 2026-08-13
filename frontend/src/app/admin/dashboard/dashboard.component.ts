@@ -63,15 +63,10 @@ export class Dashboard implements OnInit {
     }
   }
 
-  async toggleHabilitado(usuario: UsuarioAdmin) {
+async toggleHabilitado(usuario: UsuarioAdmin) {
     const nuevoEstado = !usuario.habilitado;
-    const confirmacion = nuevoEstado
-      ? `¿Habilitar la cuenta de ${usuario.nombre}?`
-      : `¿Deshabilitar la cuenta de ${usuario.nombre}? No podrá iniciar sesión hasta que la vuelvas a habilitar.`;
-
-    if (!confirm(confirmacion)) return;
-
     this.procesandoId.set(usuario.id);
+    
     try {
       await firstValueFrom(
         this.http.patch(
@@ -80,14 +75,14 @@ export class Dashboard implements OnInit {
           { headers: this.headers() }
         )
       );
-      // Actualizamos el signal creando un arreglo nuevo (inmutabilidad),
-      // así Angular detecta el cambio de forma confiable.
+      
       this.usuarios.update((lista) =>
         lista.map((u) => (u.id === usuario.id ? { ...u, habilitado: nuevoEstado } : u))
       );
-      this.toast.exito(nuevoEstado ? `Cuenta de ${usuario.nombre} habilitada.` : `Cuenta de ${usuario.nombre} deshabilitada.`);
+      
+      this.toast.info(nuevoEstado ? `Cuenta de ${usuario.nombre} habilitada.` : `Cuenta de ${usuario.nombre} deshabilitada.`);
     } catch (err: any) {
-      this.toast.error(err?.error?.error || 'No se pudo actualizar el estado de la cuenta.');
+      this.toast.info(err?.error?.error || 'No se pudo actualizar el estado de la cuenta.');
     } finally {
       this.procesandoId.set(null);
     }
