@@ -33,6 +33,24 @@ app.use('/api/contacto', contactoRoutes);
 app.post('/api/auth/registro', async (req, res) => {
     const { nombre, apellidos, correo, password, telefono, genero, gusto_literario } = req.req_body || req.body;
 
+    // Validaciones de formato en el servidor
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // Mínimo 9 caracteres, al menos una minúscula, una mayúscula, un número y un carácter especial
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[a-zA-Z\d!@#$%^&*]{9,}$/;
+    const phoneRegex = /^\d{10}$/;
+
+    if (!emailRegex.test(correo)) {
+        return res.status(400).json({ error: 'El formato del correo electrónico no es válido.' });
+    }
+
+    if (!passwordRegex.test(password)) {
+        return res.status(400).json({ error: 'La contraseña debe tener al menos 9 caracteres, incluir una mayúscula, una minúscula, un número y un carácter especial.' });
+    }
+
+    if (telefono && !phoneRegex.test(telefono)) {
+        return res.status(400).json({ error: 'El teléfono debe contener exactamente 10 dígitos numéricos.' });
+    }
+
     try {
         // Cifrado/Hash de contraseña con Salt de 10 rondas
         const salt = await bcrypt.genSalt(10);
@@ -52,7 +70,6 @@ app.post('/api/auth/registro', async (req, res) => {
 
         res.status(201).json({ mensaje: 'Usuario registrado exitosamente con rol de Usuario' });
     } catch (err) {
-        // Manejo adecuado de errores
         if (err.code === '23505') { 
             return res.status(400).json({ error: 'El correo electrónico ya está registrado.' });
         }
