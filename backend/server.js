@@ -256,37 +256,31 @@ app.post('/api/contacto', async (req, res) => {
 });
 
 //pedidos pickup
-app.post('/api/pedidos', async (req, res) => {
+app.post('/api/pedidos', verificarTokenyRol(['Usuario', 'Administrador', 'Editor']), async (req, res) => {
     const { usuario_id, nombre_cliente, correo_cliente, telefono_cliente, productos, total } = req.body;
 
-    // Restricción 1: Validar que tenga perfil/sesión obligatoria
     if (!usuario_id || !correo_cliente) {
         return res.status(401).json({ error: 'Debes iniciar sesión para realizar un pedido de pickup.' });
     }
 
     try {
-        // Iniciar transacción para asegurar consistencia en el stock
         await pool.query('BEGIN');
 
         for (let item of productos) {
-            // Verificar stock actual (dependiendo de si es libro o bebida)
-            const tabla = item.tipo === 'libro' ? 'libros' : 'bebidas'; // Ajusta según tu estructura
-            
-            // O si manejas una sola tabla general de inventario/catalogo:
-            const checkStock = await pool.query('SELECT stock FROM catalogo WHERE id = $1', [item.id]);
-            
-            if (checkStock.rows.length > 0) {
-                const stockActual = checkStock.rows[0].stock;
-                if (stockActual <= 0) {
-                    await pool.query('ROLLBACK');
-                    return res.status(400).json({ error: `Lo sentimos, el producto "${item.titulo || item.nombre}" se ha agotado.` });
+            if (item.id) {
+                const checkStock = await pool.query('SELECT stock FROM productos_catalogo WHERE id = $1', [item.id]);
+                
+                if (checkStock.rows.length > 0) {
+                    const stockActual = checkStock.rows[0].stock;
+                    if (stockActual <= 0) {
+                        await pool.query('ROLLBACK');
+                        return res.status(400).json({ error: `Lo sentimos, el producto "${item.titulo || item.nombre}" se ha agotado.` });
+                    }
+                    await pool.query('UPDATE productos_catalogo SET stock = stock - 1 WHERE id = $1', [item.id]);
                 }
-                // Descontar del stock
-                await pool.query('UPDATE catalogo SET stock = stock - 1 WHERE id = $1', [item.id]);
             }
         }
 
-        // Guardar el pedido
         const query = `
             INSERT INTO pedidos_pickup (usuario_id, nombre_cliente, correo_cliente, telefono_cliente, productos, total, estado) 
             VALUES ($1, $2, $3, $4, $5, $6, 'Preparando en mostrador') RETURNING *;
@@ -304,7 +298,7 @@ app.post('/api/pedidos', async (req, res) => {
     } catch (err) {
         await pool.query('ROLLBACK');
         console.error("Error en pickup:", err);
-        res.status(500).json({ error: 'No se pudo procesar el pedido.' });
+        res.status(500).json({ error: 'No se pudo procesar el pedido.', detalle: err.message });
     }
 });
 
