@@ -23,8 +23,8 @@ export class Carrito{
   vaciarCarrito() {
     localStorage.removeItem('carrito_pickup');
   }
-
-  enviarPedido(datosPedido: any): Observable<any> {
-    return this.http.post(this.apiUrl, datosPedido);
-  }
+// En tu carrito.service.ts
+enviarPedido(datosPedido: any, headersObj: any) {
+  return this.http.post('https://epigrafe.onrender.com/api/pedidos', datosPedido, { headers: headersObj });
+}
 }

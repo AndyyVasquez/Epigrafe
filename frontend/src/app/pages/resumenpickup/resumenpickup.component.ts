@@ -82,19 +82,18 @@ export class ResumenPickup implements OnInit {
     });
   }
 
-  confirmarPedido() {
-     const token = localStorage.getItem('token');
-  if (!token) {
-    this.toast.info('Inicia sesión para poder realizar tu apartado en pickup.');
-    this.router.navigate(['/login']);
-    return;
-  }
+confirmarPedido() {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      this.toast.info('Inicia sesión para poder realizar tu apartado en pickup.');
+      this.router.navigate(['/login']);
+      return;
+    }
+
     if (this.productos.length === 0) {
       this.toast.info('Tu carrito de pickup está vacío.');
       return;
     }
-
-    
 
     if (!this.nombreCliente || !this.correoCliente) {
       this.toast.info('Por favor completa tu nombre y correo para el apartado.');
@@ -103,7 +102,16 @@ export class ResumenPickup implements OnInit {
 
     this.cargando = true;
 
+    let usuarioId = null;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      usuarioId = payload.id;
+    } catch (e) {
+      console.error('No se pudo leer el token', e);
+    }
+
     const datosPedido = {
+      usuario_id: usuarioId, 
       nombre_cliente: this.nombreCliente,
       correo_cliente: this.correoCliente,
       telefono_cliente: this.telefonoCliente || 'No proporcionado',
@@ -111,6 +119,7 @@ export class ResumenPickup implements OnInit {
       total: this.total
     };
 
+    // Enviar el pedido (el servicio espera solo los datos del pedido)
     this.carrito.enviarPedido(datosPedido).subscribe({
       next: (res) => {
         this.toast.info('¡Pedido registrado con éxito! Te esperamos en mostrador.');
@@ -120,7 +129,7 @@ export class ResumenPickup implements OnInit {
       },
       error: (err) => {
         console.error(err);
-        this.toast.info('Hubo un error al procesar tu pedido. Intenta de nuevo.');
+        this.toast.info(err?.error?.error || 'Hubo un error al procesar tu pedido. Intenta de nuevo.');
         this.cargando = false;
       }
     });
