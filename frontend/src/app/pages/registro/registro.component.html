@@ -16,17 +16,17 @@
 
     <div class="mt-6">
       <label class="block text-sm font-medium mb-1">Correo electrónico</label>
-      <input [(ngModel)]="usuario.correo" name="correo" type="email" required pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$" title="Introduce un correo válido, por ejemplo: correo@gmail.com" class="w-full p-3 border rounded-lg" placeholder="correo@ejemplo.com">
+      <input [(ngModel)]="usuario.correo" name="correo" type="email" required pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$" title="Introduce un correo válido con @, por ejemplo: correo@gmail.com" class="w-full p-3 border rounded-lg" placeholder="correo@ejemplo.com">
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
       <div>
         <label class="block text-sm font-medium mb-1">Contraseña</label>
-        <input [(ngModel)]="usuario.password" name="password" type="password" required pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[a-zA-Z\d!@#$%^&*]{9,}$" title="La contraseña debe tener al menos 9 caracteres, incluir mayúscula, minúscula, número y carácter especial (!@#$%^&*)" class="w-full p-3 border rounded-lg">
+        <input [(ngModel)]="usuario.password" name="password" type="password" required pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[a-zA-Z\d!@#$%^&*]{9,}$" title="La contraseña debe tener al menos 9 caracteres, incluir una mayúscula, una minúscula, un número y un carácter especial (!@#$%^&*)" class="w-full p-3 border rounded-lg">
       </div>
       <div>
         <label class="block text-sm font-medium mb-1">Teléfono</label>
-        <input [(ngModel)]="usuario.telefono" name="telefono" type="tel" inputmode="numeric" pattern="^\d{10}$" minlength="10" maxlength="10" title="Introduce un teléfono de 10 dígitos (solo números)" class="w-full p-3 border rounded-lg">
+        <input [(ngModel)]="usuario.telefono" name="telefono" type="tel" inputmode="numeric" pattern="^\d{10}$" minlength="10" maxlength="10" title="Introduce un teléfono exacto de 10 dígitos numéricos" class="w-full p-3 border rounded-lg">
       </div>
     </div>
 
