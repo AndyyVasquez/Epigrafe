@@ -119,8 +119,9 @@ confirmarPedido() {
       total: this.total
     };
 
-    // Enviar el pedido (el servicio espera solo los datos del pedido)
-    this.carrito.enviarPedido(datosPedido).subscribe({
+    const headers = { Authorization: `Bearer ${token}` };
+
+    this.carrito.enviarPedido(datosPedido, headers).subscribe({
       next: (res) => {
         this.toast.info('¡Pedido registrado con éxito! Te esperamos en mostrador.');
         this.carrito.vaciarCarrito();
