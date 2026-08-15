@@ -25,11 +25,11 @@
 <div class="p-8 rounded-2xl shadow-md border flex flex-col justify-between h-full min-h-[320px] transition-colors duration-500"
      [ngClass]="getClasesTarjeta()">
 
-  @if (mesActual === 5) { <span class="text-xs font-bold text-center text-white px-2 py-1 rounded-full bg-pride-gradient mb-2 block">Orgullo LGBT+</span> }
-  @if (mesActual === 6) {
-    <div class="overflow-hidden whitespace-nowrap mb-2 block bg-amber-100 py-1 rounded-full border border-amber-200">
-      <div class="animate-marquee text-lg">🐕‍🦺 🐕 🐩 🐾 🐕‍🦺 🐕 🐩 🐾 🐕‍🦺 🐕 🐩 🐾</div>
-    </div>
+  <!-- Indicador visual superior para Agosto -->
+  @if (mesActual === 7) { 
+    <span class="text-xs font-bold text-center text-white px-3 py-1 rounded-full bg-amber-600 mb-2 block">
+      ☀️ Especial de Verano
+    </span> 
   }
 
   @if (cargandoInscripcion) {
@@ -57,13 +57,13 @@
     <div class="flex flex-col h-full justify-between">
       <div>
         <h3 class="text-2xl font-serif font-bold mb-4 text-center text-texto-principal">
-          {{ mesActual === 6 ? '¡Amigos de cuatro patas!' : 'Club de lectura' }}
+          {{ mesActual === 7 ? 'Club de Lectura: Edición de Verano' : 'Club de lectura' }}
         </h3>
         <p class="font-bold text-lg mb-4 text-center text-texto-principal">
-          {{ mesActual === 6 ? 'Celebramos con nuestros compañeros peludos' : 'Próxima reunión: Sábado 27 de junio' }}
+          {{ mesActual === 7 ? 'Próxima reunión: Sábado 29 de agosto' : 'Próxima reunión' }}
         </p>
         <p class="text-base text-gray-700 text-justify leading-relaxed mb-8">
-          {{ mesActual === 6 ? 'En julio, trae a tu mascota y únete al club de lectura. Este mes los libros a discutir son: Su olor después de la lluvia de Cédric Sapin-Defour y El arte de conducir bajo la lluvia de Garth Stein.' : 'Libro del mes: autor o autora que pertenezca a la comunidad LGBT+' }}
+          {{ mesActual === 7 ? 'Durante agosto nos sumergiremos en grandes historias para cerrar el verano. Analizaremos obras que desafían la imaginación acompañados de una bebida fría en nuestra sucursal.' : 'Únete a nuestras sesiones mensuales de lectura y debate.' }}
         </p>
       </div>
       <button (click)="abrirFormulario()" [disabled]="inscripcionExitosa" class="bg-verde-epigrafe text-white font-semibold py-3 px-8 rounded-md self-center">

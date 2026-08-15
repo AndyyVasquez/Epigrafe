@@ -10,16 +10,16 @@ import { CommonModule } from '@angular/common';
 export class Eventos {
   eventos = [
     {
-      titulo: 'Presentación de Libro',
-      fecha: '15 de julio',
+      titulo: 'Círculo de Poesía Contemporánea',
+      fecha: '14 de agosto',
       hora: '18:00',
-      descripcion: 'Acompañanos en el lanzamiento de la nueva novela de autores locales.'
+      descripcion: 'Acompañanos en una velada dedicada a la poesía moderna y café de especialidad.'
     },
     {
-      titulo: 'Taller de Poesía',
-      fecha: '22 de julio',
+      titulo: 'Taller de Encuadernación Artesanal',
+      fecha: '28 de agosto',
       hora: '17:00',
-      descripcion: 'Explora tu lado creativo en nuestra tarde de versos y café.'
+      descripcion: 'Aprende las técnicas básicas para encuadernar tus propias libretas y libros.'
     }
   ];
 }

@@ -42,22 +42,6 @@ export class Highlights implements OnInit, OnDestroy {
 
   mesActual = new Date().getMonth();
 
-  celebraciones: any = {
-    1: {
-      titulo: 'Especial San Valentín',
-      color: 'bg-rose-50',
-      border: 'border-rose-200',
-      text: 'text-rose-600',
-    },
-    5: { titulo: 'Orgullo LGBT+', color: 'bg-white', border: 'border-gray-100', isPride: true },
-    6: {
-      titulo: 'Día Mundial del Perro 🐾',
-      color: 'bg-amber-50',
-      border: 'border-amber-200',
-      isDog: true,
-    },
-  };
-
   ngOnInit() {
     this.iniciarCarrusel();
     window.addEventListener('load', this.configurarTemporada);
@@ -65,8 +49,7 @@ export class Highlights implements OnInit, OnDestroy {
 
   getClasesTarjeta() {
     const base = 'bg-white bg-opacity-60 border-gray-100';
-    if (this.mesActual === 1) return 'bg-rose-50 border-rose-200';
-    if (this.mesActual === 6) return 'bg-amber-50 border-amber-200';
+    if (this.mesActual === 7) return 'bg-amber-50 border-amber-200';
     return base;
   }
 
@@ -76,7 +59,7 @@ export class Highlights implements OnInit, OnDestroy {
   }
 
   configurarTemporada = () => {
-    console.log('Sistema de temporada cargado para el mes:', this.mesActual);
+    console.log('Sistema de temporada cargado para el mes de Agosto:', this.mesActual);
   };
 
   iniciarCarrusel() {
