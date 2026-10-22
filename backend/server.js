@@ -272,7 +272,7 @@ app.post('/api/contacto', async (req, res) => {
     }
 });
 
-//pedidos pickup
+// pedidos pickup con hora de México Centro
 app.post('/api/pedidos', verificarTokenyRol(['Usuario', 'Administrador', 'Editor']), async (req, res) => {
     const { usuario_id, nombre_cliente, correo_cliente, telefono_cliente, productos, total } = req.body;
 
@@ -298,11 +298,15 @@ app.post('/api/pedidos', verificarTokenyRol(['Usuario', 'Administrador', 'Editor
             }
         }
 
+        // Obtener la fecha y hora exacta en la zona horaria de México Centro
+        const fechaHoraMexico = new Date().toLocaleString("en-US", { timeZone: "America/Mexico_City" });
+        const fechaLocal = new Date(fechaHoraMexico);
+
         const query = `
-            INSERT INTO pedidos_pickup (usuario_id, nombre_cliente, correo_cliente, telefono_cliente, productos, total, estado) 
-            VALUES ($1, $2, $3, $4, $5, $6, 'Preparando en mostrador') RETURNING *;
+            INSERT INTO pedidos_pickup (usuario_id, nombre_cliente, correo_cliente, telefono_cliente, productos, total, estado, created_at) 
+            VALUES ($1, $2, $3, $4, $5, $6, 'Preparando en mostrador', $7) RETURNING *;
         `;
-        const values = [usuario_id, nombre_cliente, correo_cliente, telefono_cliente, JSON.stringify(productos), total];
+        const values = [usuario_id, nombre_cliente, correo_cliente, telefono_cliente, JSON.stringify(productos), total, fechaLocal];
         const nuevoPedido = await pool.query(query, values);
 
         await pool.query('COMMIT');
