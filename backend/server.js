@@ -303,7 +303,7 @@ app.post('/api/pedidos', verificarTokenyRol(['Usuario', 'Administrador', 'Editor
         const fechaLocal = new Date(fechaHoraMexico);
 
         const query = `
-            INSERT INTO pedidos_pickup (usuario_id, nombre_cliente, correo_cliente, telefono_cliente, productos, total, estado, created_at) 
+            INSERT INTO pedidos_pickup (usuario_id, nombre_cliente, correo_cliente, telefono_cliente, productos, total, estado, creado_en) 
             VALUES ($1, $2, $3, $4, $5, $6, 'Preparando en mostrador', $7) RETURNING *;
         `;
         const values = [usuario_id, nombre_cliente, correo_cliente, telefono_cliente, JSON.stringify(productos), total, fechaLocal];
