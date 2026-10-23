@@ -3,11 +3,12 @@ import { RouterOutlet } from '@angular/router'; // ¡Volvió!
 import { Navbar } from './components/navbar/navbar.component';
 import { Footer } from './components/footer/footer.component';
 import { ToastContainer } from './services/toast/toast.component';
+import { BannerSeguimientoComponent } from './components/banner-seguimiento/banner-seguimiento';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, Navbar, Footer, ToastContainer],
+  imports: [RouterOutlet, Navbar, Footer, ToastContainer, BannerSeguimientoComponent],
   templateUrl: './app.component.html'
 })
 export class AppComponent {

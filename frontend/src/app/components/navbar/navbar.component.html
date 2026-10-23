@@ -107,7 +107,8 @@
                 <p class="text-xs text-gray-400">{{ user.rol }}</p>
               </div>
               <a routerLink="/profile" class="block px-5 py-3 hover:bg-crema-fondo hover:text-verde-epigrafe transition-colors">Mi Perfil y Contraseña</a>
-              
+              <a routerLink="/mi-pedido" class="block px-5 py-3 hover:bg-crema-fondo hover:text-verde-epigrafe transition-colors font-semibold text-amber-700">📦 Seguimiento de mi Pedido</a>
+
               @if (user.rol === 'Administrador') {
                 <a routerLink="/admin/dashboard" class="block px-5 py-3 hover:bg-crema-fondo hover:text-verde-epigrafe transition-colors">Panel de administración</a>
               }
@@ -159,7 +160,7 @@
     <a routerLink="/libreria/novedades" (click)="closeMenu()" class="block py-2 font-medium hover:text-white transition-colors">Librería (Novedades)</a>
     <a routerLink="/clublectura" (click)="closeMenu()" class="block py-2 font-medium hover:text-white transition-colors">Club de Lectura</a>
     <a routerLink="/contacto/mensaje" (click)="closeMenu()" class="block py-2 font-medium hover:text-white transition-colors">Contacto / Escríbenos</a>
-    
+
     <div class="pt-3 border-t border-amber-800">
   @if (authService.user$ | async; as user) {
     <!-- Al dar clic en el nombre va al perfil y cierra el menú -->

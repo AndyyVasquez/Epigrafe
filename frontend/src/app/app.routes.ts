@@ -22,6 +22,7 @@ import { Registro } from './pages/registro/registro.component';
 import { authGuard } from './auth-guard';
 import { ResumenPickup } from './pages/resumenpickup/resumenpickup.component';
 import { Profile } from './pages/profile/profile.component';
+import { SeguimientoPedidoComponent } from './pages/seguimiento-pedido/seguimiento-pedido';
 
 
 export const routes: Routes = [
@@ -37,12 +38,13 @@ export const routes: Routes = [
   { path: 'clublectura', component: Clublectura },
   { path: 'eventos', component: Eventos },
   { path: 'beneficios', component: Beneficios },
+  { path: 'mi-pedido', component: SeguimientoPedidoComponent },
   { path: 'contacto/ubicacion', component: Ubicacion },
   { path: 'contacto/faq', component: Faq },
   { path: 'contacto/facturacion', component: Facturacion },
   { path: 'contacto/mensaje', component: Contactomsj },
   { path: 'terminos/terminos', component: Terminos },
-  { path: 'profile', component: Profile }, 
+  { path: 'profile', component: Profile },
   { path: 'login', component: IniciarSesion },
   { path: 'registro', component: Registro },
   {

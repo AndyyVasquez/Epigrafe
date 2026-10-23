@@ -16,6 +16,17 @@ interface UsuarioAdmin {
   rol: string;
 }
 
+// Interfaz para los pedidos de Pickup
+interface PedidoPickup {
+  id: number;
+  nombre_cliente: string;
+  correo_cliente: string;
+  telefono_cliente: string;
+  total: number;
+  estado: string;
+  creado_en: string;
+}
+
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -24,21 +35,25 @@ interface UsuarioAdmin {
   styleUrl: './dashboard.component.css',
 })
 export class Dashboard implements OnInit {
-  // Signals en vez de propiedades normales: en una app zoneless (sin Zone.js,
-  // como esta), Angular solo vuelve a renderizar la vista cuando detecta que
-  // un signal cambió. Si usáramos "this.cargando = false" después de un
-  // await, el cambio ocurre fuera de cualquier evento que Angular esté
-  // observando, y la vista nunca se actualiza aunque el dato ya sea correcto
-  // — que es exactamente lo que estaba pasando.
   usuarios = signal<UsuarioAdmin[]>([]);
   cargando = signal(true);
   error = signal('');
   procesandoId = signal<number | null>(null);
 
+  // NUEVOS SIGNALS PARA GESTIÓN DE PEDIDOS EN EL DASHBOARD
+  pedidos = signal<PedidoPickup[]>([]);
+  cargandoPedidos = signal(false);
+
   constructor(private http: HttpClient, private toast: ToastService) {}
 
   ngOnInit() {
     this.cargarUsuarios();
+    this.cargarPedidos();
+
+    // Polling cada 10 segundos para actualizar pedidos en tiempo real en el panel de admin
+    setInterval(() => {
+      this.cargarPedidos();
+    }, 10000);
   }
 
   private headers() {
@@ -63,10 +78,44 @@ export class Dashboard implements OnInit {
     }
   }
 
-async toggleHabilitado(usuario: UsuarioAdmin) {
+  // NUEVO: Cargar pedidos desde Render
+  async cargarPedidos() {
+    try {
+      const datos = await firstValueFrom(
+        this.http.get<PedidoPickup[]>('https://epigrafe.onrender.com/api/pedidos')
+      );
+      this.pedidos.set(datos);
+    } catch (err: any) {
+      console.error('Error al cargar pedidos:', err);
+    }
+  }
+
+  // NUEVO: Cambiar estatus de pedido y sincronizar con el reloj Wear OS
+  async actualizarEstadoPedido(pedidoId: number, event: any) {
+    const nuevoEstado = event.target.value;
+    try {
+      await firstValueFrom(
+        this.http.patch(`https://epigrafe.onrender.com/api/pedidos/${pedidoId}/estado`, {
+          estado: nuevoEstado,
+        })
+      );
+
+      // Actualizamos el signal localmente de forma reactiva
+      this.pedidos.update((lista) =>
+        lista.map((p) => (p.id === pedidoId ? { ...p, estado: nuevoEstado } : p))
+      );
+
+      this.toast.info(`Estado del pedido #${pedidoId} actualizado a: ${nuevoEstado}`);
+    } catch (err: any) {
+      this.toast.error('No se pudo actualizar el estado del pedido.');
+    }
+  }
+
+  async toggleHabilitado(usuario: UsuarioAdmin) {
+    // ... (tu código existente de usuarios)
     const nuevoEstado = !usuario.habilitado;
     this.procesandoId.set(usuario.id);
-    
+
     try {
       await firstValueFrom(
         this.http.patch(
@@ -75,11 +124,11 @@ async toggleHabilitado(usuario: UsuarioAdmin) {
           { headers: this.headers() }
         )
       );
-      
+
       this.usuarios.update((lista) =>
         lista.map((u) => (u.id === usuario.id ? { ...u, habilitado: nuevoEstado } : u))
       );
-      
+
       this.toast.info(nuevoEstado ? `Cuenta de ${usuario.nombre} habilitada.` : `Cuenta de ${usuario.nombre} deshabilitada.`);
     } catch (err: any) {
       this.toast.info(err?.error?.error || 'No se pudo actualizar el estado de la cuenta.');
@@ -89,6 +138,7 @@ async toggleHabilitado(usuario: UsuarioAdmin) {
   }
 
   async toggleRequiereCambioPassword(usuario: UsuarioAdmin) {
+    // ... (tu código existente)
     const nuevoValor = !usuario.requiere_cambio_password;
     this.procesandoId.set(usuario.id);
     try {

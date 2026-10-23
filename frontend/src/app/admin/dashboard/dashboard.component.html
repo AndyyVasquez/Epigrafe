@@ -1,6 +1,9 @@
 <div class="p-10">
   <h1 class="text-3xl font-bold text-verde-epigrafe mb-2">Panel de Administración</h1>
-  <p class="text-gray-500 mb-8">Gestión de cuentas de usuario</p>
+  <p class="text-gray-500 mb-8">Gestión de cuentas de usuario y pedidos en tiempo real</p>
+
+  <!-- SECCIÓN 1: GESTIÓN DE USUARIOS -->
+  <h2 class="text-xl font-bold text-verde-epigrafe mb-4">Cuentas de Usuario</h2>
 
   @if (cargando()) {
     <p class="text-gray-500">Cargando usuarios...</p>
@@ -10,7 +13,7 @@
       <button (click)="cargarUsuarios()" class="ml-2 underline">Reintentar</button>
     </div>
   } @else {
-    <div class="overflow-x-auto rounded-xl border border-gray-200">
+    <div class="overflow-x-auto rounded-xl border border-gray-200 mb-10">
       <table class="min-w-full text-sm text-left">
         <thead class="bg-gray-50 text-gray-600 uppercase text-xs">
           <tr>
@@ -75,11 +78,63 @@
         </tbody>
       </table>
     </div>
-
-    <p class="text-xs text-gray-400 mt-4">
-      Deshabilitar una cuenta no borra su información: el usuario deja de poder
-      iniciar sesión, pero su registro permanece en el sistema y puede
-      reactivarse en cualquier momento.
-    </p>
   }
+
+  <!-- SECCIÓN 2: GESTIÓN DE PEDIDOS PICKUP (Sincronizado con Reloj Wear OS) -->
+  <h2 class="text-xl font-bold text-verde-epigrafe mb-4 mt-8">📦 Pedidos Activos (Pickup)</h2>
+
+  <div class="overflow-x-auto rounded-xl border border-gray-200">
+    <table class="min-w-full text-sm text-left">
+      <thead class="bg-gray-50 text-gray-600 uppercase text-xs">
+        <tr>
+          <th class="px-4 py-3"># ID</th>
+          <th class="px-4 py-3">Cliente</th>
+          <th class="px-4 py-3">Teléfono</th>
+          <th class="px-4 py-3">Total</th>
+          <th class="px-4 py-3">Estado Actual</th>
+          <th class="px-4 py-3">Cambiar Estado</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        @for (p of pedidos(); track p.id) {
+          <tr class="hover:bg-crema-fondo/40">
+            <td class="px-4 py-3 font-bold">#{{ p.id }}</td>
+            <td class="px-4 py-3">
+              <div class="font-medium text-texto-principal">{{ p.nombre_cliente }}</div>
+              <div class="text-gray-500 text-xs">{{ p.correo_cliente }}</div>
+            </td>
+            <td class="px-4 py-3 text-gray-500">{{ p.telefono_cliente || 'N/A' }}</td>
+            <td class="px-4 py-3 font-bold text-green-700">${{ p.total }}</td>
+            <td class="px-4 py-3">
+              <span class="px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-semibold">
+                {{ p.estado }}
+              </span>
+            </td>
+            <td class="px-4 py-3">
+              <select
+                class="form-select text-xs border border-gray-300 rounded-md p-1.5 bg-white"
+                (change)="actualizarEstadoPedido(p.id, $event)">
+                <option value="" disabled selected>Seleccionar...</option>
+                <option value="Preparando en mostrador">Preparando en mostrador</option>
+                <option value="¡Pedido listo para recoger!">¡Pedido listo para recoger!</option>
+                <option value="Entregado">Entregado</option>
+              </select>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="6" class="text-center text-gray-400 py-6">
+              No hay pedidos activos en este momento.
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <p class="text-xs text-gray-400 mt-4">
+    Deshabilitar una cuenta no borra su información: el usuario deja de poder
+    iniciar sesión, pero su registro permanece en el sistema y puede
+    reactivarse en cualquier momento.
+  </p>
 </div>
