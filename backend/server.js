@@ -272,6 +272,20 @@ app.post('/api/contacto', async (req, res) => {
     }
 });
 
+//pedidos get
+app.get('/api/pedidos', verificarTokenyRol(['Usuario', 'Administrador', 'Editor']), async (req, res) => {
+    try {
+        const resultado = await pool.query(
+            `SELECT id, usuario_id, nombre_cliente, correo_cliente, telefono_cliente, productos, total, estado, creado_en 
+             FROM pedidos_pickup 
+             ORDER BY id DESC LIMIT 15`
+        );
+        res.status(200).json(resultado.rows);
+    } catch (err) {
+        console.error("Error al obtener los pedidos:", err);
+        res.status(500).json({ error: 'No se pudieron obtener los pedidos.' });
+    }
+});
 // pedidos pickup con hora de México Centro
 app.post('/api/pedidos', verificarTokenyRol(['Usuario', 'Administrador', 'Editor']), async (req, res) => {
     const { usuario_id, nombre_cliente, correo_cliente, telefono_cliente, productos, total } = req.body;
