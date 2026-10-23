@@ -337,6 +337,31 @@ app.post('/api/pedidos', verificarTokenyRol(['Usuario', 'Administrador', 'Editor
     }
 });
 
+// Cambiar el estatus de un pedido (Panel de Administración)
+app.patch('/api/pedidos/:id/estado', async (req, res) => {
+    const { id } = req.params;
+    const { estado } = req.body; // Ej: "Preparando en mostrador", "Listo para recoger", "Entregado"
+
+    try {
+        const resultado = await pool.query(
+            'UPDATE pedidos_pickup SET estado = $1 WHERE id = $2 RETURNING *',
+            [estado, id]
+        );
+
+        if (resultado.rows.length === 0) {
+            return res.status(404).json({ error: 'Pedido no encontrado.' });
+        }
+
+        res.json({
+            mensaje: 'Estatus del pedido actualizado con éxito.',
+            pedido: resultado.rows[0]
+        });
+    } catch (err) {
+        console.error('Error al actualizar estatus:', err);
+        res.status(500).json({ error: 'No se pudo actualizar el estatus.' });
+    }
+});
+
 // OBTENER TODOS LOS PRODUCTOS O FILTRAR POR CATEGORÍA
 app.get('/api/catalogo', async (req, res) => {
     const { categoria } = req.query;
