@@ -273,7 +273,7 @@ app.post('/api/contacto', async (req, res) => {
 });
 
 //pedidos get
-app.get('/api/pedidos', verificarTokenyRol(['Usuario', 'Administrador', 'Editor']), async (req, res) => {
+app.get('/api/pedidos', async (req, res) => {
     try {
         const resultado = await pool.query(
             `SELECT id, usuario_id, nombre_cliente, correo_cliente, telefono_cliente, productos, total, estado, creado_en 
