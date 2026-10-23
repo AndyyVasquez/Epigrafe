@@ -1,0 +1,39 @@
+<div class="container mt-4">
+  <h2 class="text-success fw-bold">Panel de Administración - Pedidos Epígrafe</h2>
+
+  <div class="table-responsive mt-3">
+    <table class="table table-striped align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>#ID</th>
+          <th>Cliente</th>
+          <th>Total</th>
+          <th>Estado Actual</th>
+          <th>Acciones / Cambiar Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let p of pedidos">
+          <td>{{ p.id }}</td>
+          <td>{{ p.nombre_cliente }}</td>
+          <td>${{ p.total }}</td>
+          <td>
+            <span class="badge bg-secondary">{{ p.estado }}</span>
+          </td>
+          <td>
+            <select
+              class="form-select form-select-sm"
+              [value]="p.estado"
+              [attr.aria-label]="'Cambiar estado del pedido ' + p.id"
+              (change)="actualizarEstado(p.id, $any($event.target).value)"
+            >
+              <option value="Preparando en mostrador">Preparando en mostrador</option>
+              <option value="¡Pedido listo para recoger!">¡Pedido listo para recoger!</option>
+              <option value="Entregado">Entregado</option>
+            </select>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
