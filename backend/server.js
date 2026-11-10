@@ -1,14 +1,25 @@
+// Carga variables de entorno desde un archivo .env en desarrollo local.
+// En producción (Render) las variables se definen en el panel y dotenv no hace falta.
+try { require('dotenv').config(); } catch (_) { /* dotenv es opcional en producción */ }
+
 const express = require('express');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const helmet = require('helmet');
-// const env = require('./config/env');
 const jwt = require('jsonwebtoken');
 const pool = require('./models/db');
 const contactoRoutes = require('./routes/contactoRoutes');
 
 const app = express();
-const JWT_SECRET = 'mi_clave_secreta_super_segura_para_epigrafe'; 
+
+// H1 (auditoría) — El secreto de firma de los JWT ya NO va escrito en el código.
+// Se lee de la variable de entorno JWT_SECRET. Si falta, el servidor no arranca
+// (fail-closed): es preferible caer a arrancar firmando tokens con un valor conocido.
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+    console.error('FALTA la variable de entorno JWT_SECRET. Defínela antes de iniciar el servidor.');
+    process.exit(1);
+}
 
 // Express genera un ETag automático para cada respuesta JSON. Eso está bien
 // para contenido estático, pero es peligroso en una API con datos sensibles
@@ -16,8 +27,30 @@ const JWT_SECRET = 'mi_clave_secreta_super_segura_para_epigrafe';
 // con cuerpo vacío en vez de los datos reales, o mostrar datos desactualizados
 // después de habilitar/deshabilitar un usuario. Lo desactivamos globalmente.
 app.disable('etag');
+// Oculta la cabecera X-Powered-By: Express (no anunciar la tecnología del servidor).
+app.disable('x-powered-by');
 const PORT = process.env.PORT || 3000;
-app.use(cors());
+
+// H3 (auditoría) — Cabeceras de seguridad HTTP (HSTS, X-Content-Type-Options,
+// X-Frame-Options, etc.). helmet ya estaba importado pero nunca se activaba.
+app.use(helmet());
+
+// H4 (auditoría) — CORS restringido a los orígenes permitidos en vez de "*".
+// Se definen en la variable CORS_ORIGINS (separados por comas). Las peticiones
+// sin cabecera Origin (app Wear con OkHttp, curl, apps móviles) se permiten,
+// porque CORS solo protege a los navegadores.
+const origenesPermitidos = (process.env.CORS_ORIGINS || '')
+    .split(',')
+    .map(o => o.trim())
+    .filter(Boolean);
+app.use(cors({
+    origin: (origin, callback) => {
+        if (!origin || origenesPermitidos.length === 0 || origenesPermitidos.includes(origin)) {
+            return callback(null, true);
+        }
+        return callback(new Error('Origen no permitido por CORS'));
+    }
+}));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
@@ -85,7 +118,9 @@ app.post('/api/auth/login', async (req, res) => {
         // Verificar si el usuario existe
        const usuarioRes = await pool.query('SELECT * FROM usuarios WHERE correo = $1', [correo]);
         if (usuarioRes.rows.length === 0) {
-            return res.status(401).json({ error: 'Credenciales inválidas (Correo no encontrado).' });
+            // H5 (auditoría) — Mismo mensaje que cuando la contraseña es incorrecta,
+            // para no revelar si un correo está registrado (evita enumeración de usuarios).
+            return res.status(401).json({ error: 'Credenciales inválidas.' });
         }
 
         const usuario = usuarioRes.rows[0];
@@ -100,7 +135,7 @@ app.post('/api/auth/login', async (req, res) => {
         // Validación de credenciales comparando hashes
         const validPassword = await bcrypt.compare(password, usuario.password);
         if (!validPassword) {
-            return res.status(401).json({ error: 'Credenciales inválidas (Contraseña incorrecta).' });
+            return res.status(401).json({ error: 'Credenciales inválidas.' });
         }
 
         // Registrar el último inicio de sesión exitoso
@@ -235,7 +270,8 @@ app.patch('/api/admin/usuarios/:id/estado', verificarTokenyRol(['Administrador']
     }
 });
 
-app.put('/api/usuarios/cambiar-password', async (req, res) => {
+// H2 (auditoría) — Requiere sesión válida (cualquier rol) para cambiar contraseña.
+app.put('/api/usuarios/cambiar-password', verificarTokenyRol(), async (req, res) => {
     const { correo, passwordActual, nuevoPassword } = req.body;
     try {
         const usuario = await pool.query('SELECT * FROM usuarios WHERE correo = $1', [correo]);
@@ -338,7 +374,8 @@ app.post('/api/pedidos', verificarTokenyRol(['Usuario', 'Administrador', 'Editor
 });
 
 // Cambiar el estatus de un pedido (Panel de Administración)
-app.patch('/api/pedidos/:id/estado', async (req, res) => {
+// H2 (auditoría) — Solo personal autorizado puede cambiar el estado de un pedido.
+app.patch('/api/pedidos/:id/estado', verificarTokenyRol(['Administrador', 'Editor']), async (req, res) => {
     const { id } = req.params;
     const { estado } = req.body; // Ej: "Preparando en mostrador", "Listo para recoger", "Entregado"
 
@@ -380,7 +417,8 @@ app.get('/api/catalogo', async (req, res) => {
 });
 
 // CREAR PRODUCTO (CRUD - Admin)
-app.post('/api/catalogo', async (req, res) => {
+// H2 (auditoría) — Crear producto: solo Administrador o Editor.
+app.post('/api/catalogo', verificarTokenyRol(['Administrador', 'Editor']), async (req, res) => {
     const { categoria, titulo, autor, descripcion, precio, stock, imagen, tipo_etiqueta } = req.body;
     try {
         const nuevo = await pool.query(
@@ -396,7 +434,8 @@ app.post('/api/catalogo', async (req, res) => {
 });
 
 // ACTUALIZAR PRODUCTO (CRUD - Admin)
-app.put('/api/catalogo/:id', async (req, res) => {
+// H2 (auditoría) — Actualizar producto: solo Administrador o Editor.
+app.put('/api/catalogo/:id', verificarTokenyRol(['Administrador', 'Editor']), async (req, res) => {
     const { id } = req.params;
     const { categoria, titulo, autor, descripcion, precio, stock, imagen, tipo_etiqueta } = req.body;
     try {
@@ -419,7 +458,8 @@ app.put('/api/catalogo/:id', async (req, res) => {
 });
 
 // ELIMINAR PRODUCTO (CRUD - Admin)
-app.delete('/api/catalogo/:id', async (req, res) => {
+// H2 (auditoría) — Eliminar producto: solo Administrador.
+app.delete('/api/catalogo/:id', verificarTokenyRol(['Administrador']), async (req, res) => {
     const { id } = req.params;
     try {
         await pool.query('DELETE FROM productos_catalogo WHERE id = $1', [id]);
