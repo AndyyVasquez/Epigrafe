@@ -28,10 +28,8 @@ export class Navbar {
     this.menuOpen = false;
   }
 
-  cerrarSesion() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('usuario');
-    this.authService.updateUser(null);
+  async cerrarSesion() {
+    await this.authService.cerrarSesion(); // V6: revoca el token en el servidor
     this.toast.info('Cerraste sesión correctamente.');
     this.router.navigate(['/']); // Redirige al inicio
     this.closeMenu();

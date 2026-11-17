@@ -27,6 +27,15 @@ interface PedidoPickup {
   creado_en: string;
 }
 
+interface RelojVinculado {
+  jti: string;
+  descripcion: string | null;
+  creada_en: string;
+  expira_en: string;
+  nombre: string;
+  correo: string;
+}
+
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -44,11 +53,17 @@ export class Dashboard implements OnInit {
   pedidos = signal<PedidoPickup[]>([]);
   cargandoPedidos = signal(false);
 
+  // V2 — Relojes Wear OS vinculados a una cuenta del personal
+  relojes = signal<RelojVinculado[]>([]);
+  codigoReloj = signal('');
+  vinculandoReloj = signal(false);
+
   constructor(private http: HttpClient, private toast: ToastService) {}
 
   ngOnInit() {
     this.cargarUsuarios();
     this.cargarPedidos();
+    this.cargarRelojes();
 
     // Polling cada 10 segundos para actualizar pedidos en tiempo real en el panel de admin
     setInterval(() => {
@@ -156,6 +171,58 @@ export class Dashboard implements OnInit {
       this.toast.error(err?.error?.error || 'No se pudo actualizar el usuario.');
     } finally {
       this.procesandoId.set(null);
+    }
+  }
+
+  // V2 — Vinculación de relojes: el reloj muestra un código de 6 dígitos y aquí se confirma.
+  async cargarRelojes() {
+    try {
+      const datos = await firstValueFrom(
+        this.http.get<RelojVinculado[]>('https://epigrafe.onrender.com/api/reloj/dispositivos')
+      );
+      this.relojes.set(datos);
+    } catch (err: any) {
+      console.error('Error al cargar relojes:', err);
+    }
+  }
+
+  onCodigoReloj(event: Event) {
+    const valor = (event.target as HTMLInputElement).value.replace(/\D/g, '').slice(0, 6);
+    (event.target as HTMLInputElement).value = valor;
+    this.codigoReloj.set(valor);
+  }
+
+  async vincularReloj() {
+    const codigo = this.codigoReloj();
+    if (!/^\d{6}$/.test(codigo)) {
+      this.toast.error('Escribe el código de 6 dígitos que aparece en el reloj.');
+      return;
+    }
+    this.vinculandoReloj.set(true);
+    try {
+      await firstValueFrom(
+        this.http.post('https://epigrafe.onrender.com/api/reloj/vinculacion/confirmar', { codigo })
+      );
+      this.toast.exito('Reloj vinculado. En unos segundos mostrará los pedidos.');
+      this.codigoReloj.set('');
+      // El token se crea cuando el reloj lo recoge; se recarga la lista un poco después.
+      setTimeout(() => this.cargarRelojes(), 8000);
+    } catch (err: any) {
+      this.toast.error(err?.error?.error || 'No se pudo vincular el reloj.');
+    } finally {
+      this.vinculandoReloj.set(false);
+    }
+  }
+
+  async desvincularReloj(reloj: RelojVinculado) {
+    try {
+      await firstValueFrom(
+        this.http.delete(`https://epigrafe.onrender.com/api/reloj/dispositivos/${reloj.jti}`)
+      );
+      this.relojes.update((lista) => lista.filter((r) => r.jti !== reloj.jti));
+      this.toast.info('Reloj desvinculado. Ya no puede ver ni modificar pedidos.');
+    } catch (err: any) {
+      this.toast.error(err?.error?.error || 'No se pudo desvincular el reloj.');
     }
   }
 

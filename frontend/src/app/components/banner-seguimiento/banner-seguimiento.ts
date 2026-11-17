@@ -38,6 +38,11 @@ export class BannerSeguimientoComponent implements OnInit, OnDestroy {
   }
 
   verificarPedido() {
+    // V1: la API solo devuelve pedidos con sesión iniciada (y solo los del propio cliente)
+    if (!localStorage.getItem('token')) {
+      this.pedidoActivo.set(null);
+      return;
+    }
     this.http.get<any[]>('https://epigrafe.onrender.com/api/pedidos').subscribe({
       next: (pedidos) => {
         if (pedidos && pedidos.length > 0) {

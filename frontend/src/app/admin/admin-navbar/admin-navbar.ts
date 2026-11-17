@@ -12,8 +12,8 @@ import { AuthService } from '../../auth.service';
 export class AdminNavbarComponent {
   constructor(private authService: AuthService, private router: Router) {}
 
-  cerrarSesion() {
-    localStorage.removeItem('token');
+  async cerrarSesion() {
+    await this.authService.cerrarSesion(); // V6: revoca el token en el servidor
     // Forzar recarga o redirección al login
     this.router.navigate(['/login']);
   }
